@@ -20,6 +20,19 @@ Artistic Style Outline
 Systematic Breakdown of Components
 ==================================
 
+Combat
+------
+
+
+Spell Generation
+----------------
+
+Spells
+------
+
+Equipment
+---------
+
 Asset Break Down
 ================
 
