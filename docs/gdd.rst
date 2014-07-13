@@ -56,11 +56,21 @@ A player can only attack once per turn.
     Is this initiative based?
     ATB?
 
+Spells/Stances
+--------------
+
+Instead of traditional spells, players will have "stances."
+These stances can have either a positive ("benefit") or negative ("cost") affect on any of the following player stats:
+
+* Damage
+* Health over time
+* Movement
+* Range
+
+A player keeps a catalog of stances in a spellbook, but must choose four stances before entering battle.
+
 Spell Generation
 ----------------
-
-Spells
-------
 
 Equipment
 ---------
