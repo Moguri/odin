@@ -14,15 +14,8 @@ Rough Plot
 Gameplay Description
 ====================
 
-Artistic Style Outline
-======================
-
-Systematic Breakdown of Components
-==================================
-
 Combat
 ------
-
 
 Spell Generation
 ----------------
@@ -32,6 +25,12 @@ Spells
 
 Equipment
 ---------
+
+Artistic Style Outline
+======================
+
+Systematic Breakdown of Components
+==================================
 
 Asset Break Down
 ================
