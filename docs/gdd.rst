@@ -42,6 +42,20 @@ To get stronger, players can gain levels and equipment.
 Combat
 ------
 
+The combat will be a tactical combat style similar to `Final Fantasy Tactics <https://en.wikipedia.org/wiki/Final_Fantasy_Tactics>`_.
+If the player reaches zero health they lose.
+If all enemy combatants reach zero health, the player wins.
+
+At the start of the player turn, they select a stance.
+Afterwards, they can do any combination of moving and attacking.
+The amount a player can move is dependent on their movement score.
+A player can only attack once per turn.
+
+.. note::
+    We need to figure out turn order.
+    Is this initiative based?
+    ATB?
+
 Spell Generation
 ----------------
 
