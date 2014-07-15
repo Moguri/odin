@@ -111,38 +111,39 @@ Audio
 Suggested Game Flow Diagram
 ===========================
 
-.. uml::
-
-    start
-
-    if (Title Screen) then (New Character)
-        :Character Creation;
-    else (Load Character)
-        :Character Load Screen;
-    endif
-
-    :Pre-Game Screen;
-
-    repeat
-        if (Assignment) then
-            :Assignment Setup;
-            :Assignment Battle;
-            :Receive Rewards;
-            :Change Spells;
-        elseif (Exam) then
-            :Exam Setup;
-            :Exam Battles;
-            :Receive Rewards;
-            :Change Spells;
-        elseif (Final) then
-            :Final Battles;
-            :Receive Rewards;
-            :Change Spells;
-        elseif (Library/Lecture) then
-            :Tutorials;
-        elseif (Exit) then
-            stop
+..
+    .. uml::
+    
+        start
+    
+        if (Title Screen) then (New Character)
+            :Character Creation;
+        else (Load Character)
+            :Character Load Screen;
         endif
+    
+        :Pre-Game Screen;
+    
+        repeat
+            if (Assignment) then
+                :Assignment Setup;
+                :Assignment Battle;
+                :Receive Rewards;
+                :Change Spells;
+            elseif (Exam) then
+                :Exam Setup;
+                :Exam Battles;
+                :Receive Rewards;
+                :Change Spells;
+            elseif (Final) then
+                :Final Battles;
+                :Receive Rewards;
+                :Change Spells;
+            elseif (Library/Lecture) then
+                :Tutorials;
+            elseif (Exit) then
+                stop
+            endif
 
 Suggested Project Timeline
 ==========================
