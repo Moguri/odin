@@ -26,6 +26,7 @@ class Game(ShowBase):
 		self.accept("arrow_right-repeat", self.sel_right)
 		self.accept("enter", self.accept_selection)
 		self.accept("1", self.enter_move_mode)
+		self.accept("2", self.enter_attack_mode)
 
 		self.terrain = CombatTerrain()
 		self.player = CombatPlayer()
@@ -52,6 +53,9 @@ class Game(ShowBase):
 	def enter_move_mode(self):
 		self.mode = "MOVE" if self.mode != "MOVE" else "NONE"
 
+	def enter_attack_mode(self):
+		self.mode = "ATTACK" if self.mode != "ATTACK" else "NONE"
+
 	def sel_up(self):
 		self.selected_pos[0] -= 1
 
@@ -69,6 +73,8 @@ class Game(ShowBase):
 		self.terrain.set_cursor_selection(*self.selected_pos[:2])
 		if self.mode == "MOVE":
 			self.terrain.display_move_range(self.player)
+		if self.mode == "ATTACK":
+			self.terrain.display_attack_range(self.player)
 		self.terrain.update_selection()
 		return task.cont
 

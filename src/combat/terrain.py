@@ -6,6 +6,7 @@ CELL_SIZE = 1
 SEL_NONE = 0
 SEL_CURS = 1 << 0
 SEL_MOVE = 1 << 1
+SEL_ATTK = 1 << 2
 
 
 class Terrain(object):
@@ -53,16 +54,24 @@ class Terrain(object):
 	def set_cursor_selection(self, x, y):
 		self.selection_image.setXelVal(x, y, SEL_CURS)
 
-	def display_move_range(self, player):
-		center = player.grid_position
-		radius = player.movement
+	def _display_range(self, center, radius, value):
 		r2 = radius**2
 		for y in range(center[1]-radius, center[1]+radius+1):
 			for x in range(center[0]-radius, center[0]+radius+1):
 				distance = (x-center[0])**2 + (y-center[1])**2
 				if distance <= r2:
-					val = self.selection_image.getGrayVal(x, y)
-					self.selection_image.setXelVal(x, y, val+SEL_MOVE)
+					old = self.selection_image.getGrayVal(x, y)
+					self.selection_image.setXelVal(x, y, old+value)
+
+	def display_move_range(self, player):
+		center = player.grid_position
+		radius = player.movement
+		self._display_range(center, radius, SEL_MOVE)
+
+	def display_attack_range(self, player):
+		center = player.grid_position
+		radius = player.range
+		self._display_range(center, radius, SEL_ATTK)
 
 	def update_selection(self):
 		self.selection_texture.load(self.selection_image)

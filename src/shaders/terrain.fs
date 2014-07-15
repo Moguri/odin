@@ -17,8 +17,9 @@ const vec3 current_color = vec3(1.0);
 const vec3 move_color = vec3(0.1, 0.1, 1.0);
 const vec3 attack_color = vec3(1.0, 0.1, 0.1);
 
-const int SEL_CUR = 1 << 0;
+const int SEL_CURS = 1 << 0;
 const int SEL_MOVE = 1 << 1;
+const int SEL_ATTK = 1 << 2;
 
 void main()
 {
@@ -55,12 +56,16 @@ void main()
 
 	vec3 sel_color = vec3(0.0);
 	int sel_count = 0;
+	if ((selection & SEL_CURS) > 0) {
+		sel_color += current_color;
+		++sel_count;
+	}
 	if ((selection & SEL_MOVE) > 0) {
 		sel_color += move_color;
 		++sel_count;
 	}
-	if ((selection & SEL_CUR) > 0) {
-		sel_color += current_color;
+	if ((selection & SEL_ATTK) > 0) {
+		sel_color += attack_color;
 		++sel_count;
 	}
 

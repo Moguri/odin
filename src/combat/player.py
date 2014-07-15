@@ -6,6 +6,7 @@ from .terrain import Terrain
 class Player(object):
 	def __init__(self):
 		self.movement = 3
+		self.range = 5
 
 		self._grid_pos = [0, 0, 0]
 		self.model = base.loader.loadModel("player")
