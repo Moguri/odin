@@ -39,6 +39,15 @@ The game will be broken up into three game modes:
 The goal of the game is to get strong enough from assignments and exams to defeat the final.
 To get stronger, players can gain levels and equipment.
 
+Character Stats
+---------------
+
+Characters have the following stats:
+
+* Damage -- Their base damage in combat
+* Movement -- How many squares the character can move
+* Range -- How many squares away the character can attack
+
 Combat
 ------
 
