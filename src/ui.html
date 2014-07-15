@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap - Now making generic looking UI too! -->
+    <!--<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">-->
+    <!-- Override premade style. CSS background has to be transparent for the texture to be transparent. -->
+    <style>
+    body {background-color: rgba(0,0,0,0.0); overflow:hidden; margin: 5%}
+
+    @-webkit-keyframes fadeInRight {
+        0% {
+            opacity: 0;
+            -webkit-transform: translateX(0);
+        }
+        1% {
+            -webkit-transform: translateX(200px);
+        }
+        100% {
+            opacity: 1;
+            -webkit-transform: translateX(0);
+        }
+    }
+
+    .fadeInRight{-webkit-animation: fadeInRight 1s; opacity: 0; -webkit-animation-fill-mode: forwards;}
+    </style>
+    </head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <div class="well page-header">
+        <span>Some helpful information?</span>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar fadeInRight">
+                <div  class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Actions</h3>
+                    </div>
+                    <div class="panel-body list-group">
+                        <a href="#" class="list-group-item">Move</a>
+                        <a href="#" class="list-group-item">Attack</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
