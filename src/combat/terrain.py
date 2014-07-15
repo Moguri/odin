@@ -55,11 +55,10 @@ class Terrain(object):
 		self.selection_image.setXelVal(x, y, SEL_CURS)
 
 	def _display_range(self, center, radius, value):
-		r2 = radius**2
 		for y in range(center[1]-radius, center[1]+radius+1):
 			for x in range(center[0]-radius, center[0]+radius+1):
-				distance = (x-center[0])**2 + (y-center[1])**2
-				if distance <= r2:
+				distance = abs(x-center[0]) + abs(y-center[1])
+				if distance <= radius:
 					old = self.selection_image.getGrayVal(x, y)
 					self.selection_image.setXelVal(x, y, old+value)
 
