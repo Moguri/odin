@@ -98,7 +98,8 @@ class Game(ShowBase):
 
 		# Track remaining enemies and add new ones if none are left
 		for dead_enemy in [e for e in self.enemies if e.health <= 0]:
-			self.active_set.remove(dead_enemy)
+			if dead_enemy in self.active_set:
+				self.active_set.remove(dead_enemy)
 		self.enemies = [e for e in self.enemies if e.health > 0]
 		if not self.enemies:
 			for i in range(3):
