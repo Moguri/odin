@@ -1,3 +1,5 @@
+import random
+
 from panda3d.core import *
 
 
@@ -27,6 +29,12 @@ class Terrain(object):
 		position[1] = position[1] - MAP_SIZE/2 + CELL_SIZE / 2.0
 
 		return position
+
+	@classmethod
+	def get_random_tile(cls):
+		x = random.randint(0, MAP_SIZE-1)
+		y = random.randint(0, MAP_SIZE-1)
+		return [x, y, 0]
 
 	def __init__(self):
 		# Load the environment model.

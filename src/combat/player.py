@@ -7,6 +7,8 @@ class Player(object):
 	def __init__(self):
 		self.movement = 3
 		self.range = 5
+		self.damage = 1
+		self.health = 1
 
 		self._grid_pos = [0, 0, 0]
 		self.model = base.loader.loadModel("player")
@@ -14,6 +16,8 @@ class Player(object):
 
 		self.grid_position = [16, 16, 0]
 
+	def __del__(self):
+		self.model.removeNode()
 
 	@property
 	def grid_position(self):

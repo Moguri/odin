@@ -31,6 +31,9 @@ class Game(ShowBase):
 		self.terrain = CombatTerrain()
 		self.player = CombatPlayer()
 
+		self.enemies = []
+
+
 		self.disableMouse()
 		self.camera.setPos(25, -25, 28)
 		self.camera.setHpr(45, -45, 0)
@@ -49,6 +52,14 @@ class Game(ShowBase):
 			distance = x**2 + y**2
 			if distance <= self.player.movement**2:
 				self.player.grid_position = self.selected_pos[:]
+		if self.mode == "ATTACK":
+			x = (self.selected_pos[0]-self.player.grid_position[0])
+			y = (self.selected_pos[1]-self.player.grid_position[1])
+			distance = x**2 + y**2
+			if distance <= self.player.range**2:
+				for enemy in self.enemies:
+					if enemy.grid_position == self.selected_pos:
+						enemy.health -= self.player.damage
 
 	def enter_move_mode(self):
 		self.mode = "MOVE" if self.mode != "MOVE" else "NONE"
@@ -72,6 +83,14 @@ class Game(ShowBase):
 		# Bound selection
 		self.selected_pos[0] = min(max(self.selected_pos[0], 0), MAP_SIZE-1)
 		self.selected_pos[1] = min(max(self.selected_pos[1], 0), MAP_SIZE-1)
+
+		self.enemies = [e for e in self.enemies if e.health > 0]
+
+		if not self.enemies:
+			for i in range(3):
+				enemy = CombatPlayer()
+				enemy.grid_position = CombatTerrain.get_random_tile()
+				self.enemies.append(enemy)
 
 		self.terrain.clear_selection()
 		self.terrain.set_cursor_selection(*self.selected_pos[:2])
