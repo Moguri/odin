@@ -32,7 +32,7 @@ class Game(ShowBase):
 		self.player = CombatPlayer()
 
 		self.disableMouse()
-		self.camera.setPos(7, -7, 10)
+		self.camera.setPos(25, -25, 28)
 		self.camera.setHpr(45, -45, 0)
 		self.camLens.setFov(65)
 
