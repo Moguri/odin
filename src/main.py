@@ -27,12 +27,14 @@ class Game(ShowBase):
 		self.accept("enter", self.accept_selection)
 		self.accept("1", self.enter_move_mode)
 		self.accept("2", self.enter_attack_mode)
+		self.accept("3", self.end_turn)
 
 		self.terrain = CombatTerrain()
-		self.player = CombatPlayer()
+		self.player = CombatPlayer("Player")
+		self.player.roll_intiative()
 
 		self.enemies = []
-
+		self.active_set = []
 
 		self.disableMouse()
 		self.camera.setPos(25, -25, 28)
@@ -52,6 +54,8 @@ class Game(ShowBase):
 			distance = x**2 + y**2
 			if distance <= self.player.movement**2:
 				self.player.grid_position = self.selected_pos[:]
+				self.player.action_set.remove("MOVE")
+				self.mode = "NONE"
 		if self.mode == "ATTACK":
 			x = (self.selected_pos[0]-self.player.grid_position[0])
 			y = (self.selected_pos[1]-self.player.grid_position[1])
@@ -60,12 +64,20 @@ class Game(ShowBase):
 				for enemy in self.enemies:
 					if enemy.grid_position == self.selected_pos:
 						enemy.health -= self.player.damage
+						self.player.action_set.remove("ATTACK")
+						self.mode = "NONE"
 
 	def enter_move_mode(self):
-		self.mode = "MOVE" if self.mode != "MOVE" else "NONE"
+		if "MOVE" in self.player.action_set:
+			self.mode = "MOVE" if self.mode != "MOVE" else "NONE"
 
 	def enter_attack_mode(self):
-		self.mode = "ATTACK" if self.mode != "ATTACK" else "NONE"
+		if "ATTACK" in self.player.action_set:
+			self.mode = "ATTACK" if self.mode != "ATTACK" else "NONE"
+
+	def end_turn(self):
+		print("clearing action set")
+		self.player.action_set = []
 
 	def sel_up(self):
 		self.selected_pos[0] -= 1
@@ -84,14 +96,40 @@ class Game(ShowBase):
 		self.selected_pos[0] = min(max(self.selected_pos[0], 0), MAP_SIZE-1)
 		self.selected_pos[1] = min(max(self.selected_pos[1], 0), MAP_SIZE-1)
 
+		# Track remaining enemies and add new ones if none are left
+		for dead_enemy in [e for e in self.enemies if e.health <= 0]:
+			self.active_set.remove(dead_enemy)
 		self.enemies = [e for e in self.enemies if e.health > 0]
-
 		if not self.enemies:
 			for i in range(3):
-				enemy = CombatPlayer()
+				enemy = CombatPlayer(i)
 				enemy.grid_position = CombatTerrain.get_random_tile()
+				enemy.roll_intiative()
 				self.enemies.append(enemy)
 
+		# Get current participants
+		participants = [self.player] + self.enemies
+		if not self.active_set:
+			while not self.active_set:
+				for participant in participants:
+					participant.atb += participant.speed
+					if participant.atb >= 10:
+						self.active_set.append(participant)
+
+			self.active_set.sort(key=lambda x: x.atb)
+			for participant in self.active_set:
+				participant.action_set = ["ATTACK", "MOVE"]
+
+		current_player = self.active_set[0]
+		if current_player != self.player:
+			current_player.action_set = []
+
+		if not current_player.action_set:
+			print("%s has finished their turn" % current_player.name)
+			current_player.atb -= 10
+			self.active_set.remove(current_player)
+
+		# Handle selection
 		self.terrain.clear_selection()
 		self.terrain.set_cursor_selection(*self.selected_pos[:2])
 		if self.mode == "MOVE":
