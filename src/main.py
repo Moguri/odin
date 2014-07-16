@@ -80,16 +80,16 @@ class Game(ShowBase):
 		self.player.action_set = []
 
 	def sel_up(self):
-		self.selected_pos[0] -= 1
+		self.selected_pos[1] += 1
 
 	def sel_left(self):
-		self.selected_pos[1] -= 1
+		self.selected_pos[0] -= 1
 
 	def sel_down(self):
-		self.selected_pos[0] += 1
+		self.selected_pos[1] -= 1
 
 	def sel_right(self):
-		self.selected_pos[1] += 1
+		self.selected_pos[0] += 1
 
 	def main_loop(self, task):
 		# Bound selection
