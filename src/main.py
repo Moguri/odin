@@ -7,7 +7,7 @@ from direct.showbase.ShowBase import ShowBase
 
 from panda3d.core import *
 
-from combat.terrain import Terrain as CombatTerrain
+from combat.terrain import Terrain as CombatTerrain, MAP_SIZE
 from combat.player import Player as CombatPlayer
 
 
@@ -69,6 +69,10 @@ class Game(ShowBase):
 		self.selected_pos[1] += 1
 
 	def main_loop(self, task):
+		# Bound selection
+		self.selected_pos[0] = min(max(self.selected_pos[0], 0), MAP_SIZE-1)
+		self.selected_pos[1] = min(max(self.selected_pos[1], 0), MAP_SIZE-1)
+
 		self.terrain.clear_selection()
 		self.terrain.set_cursor_selection(*self.selected_pos[:2])
 		if self.mode == "MOVE":

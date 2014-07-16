@@ -57,6 +57,9 @@ class Terrain(object):
 	def _display_range(self, center, radius, value):
 		for y in range(center[1]-radius, center[1]+radius+1):
 			for x in range(center[0]-radius, center[0]+radius+1):
+				if x < 0 or x >= MAP_SIZE or y < 0 or y >= MAP_SIZE:
+					continue
+
 				distance = abs(x-center[0]) + abs(y-center[1])
 				if distance <= radius:
 					old = self.selection_image.getGrayVal(x, y)
