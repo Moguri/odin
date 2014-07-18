@@ -48,19 +48,15 @@ class Game(ShowBase):
 		self.mode = "NONE"
 
 	def accept_selection(self):
+		p0 = self.player.grid_position
+		p1 = self.selected_pos
 		if self.mode == "MOVE":
-			x = (self.selected_pos[0]-self.player.grid_position[0])
-			y = (self.selected_pos[1]-self.player.grid_position[1])
-			distance = x**2 + y**2
-			if distance <= self.player.movement**2:
+			if CombatTerrain.check_distance(self.player.movement, p0, p1):
 				self.player.grid_position = self.selected_pos[:]
 				self.player.action_set.remove("MOVE")
 				self.mode = "NONE"
 		if self.mode == "ATTACK":
-			x = (self.selected_pos[0]-self.player.grid_position[0])
-			y = (self.selected_pos[1]-self.player.grid_position[1])
-			distance = x**2 + y**2
-			if distance <= self.player.range**2:
+			if CombatTerrain.check_distance(self.player.range, p0, p1):
 				for enemy in self.enemies:
 					if enemy.grid_position == self.selected_pos:
 						enemy.health -= self.player.damage

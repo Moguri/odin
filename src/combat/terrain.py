@@ -36,6 +36,19 @@ class Terrain(object):
 		y = random.randint(0, MAP_SIZE-1)
 		return [x, y, 0]
 
+	@classmethod
+	def _iterate_circle(cls, center, radius):
+		for y in range(center[1]-radius, center[1]+radius+1):
+			for x in range(center[0]-radius, center[0]+radius+1):
+				if Terrain.check_distance(radius, (x, y), center):
+					yield x, y
+
+	@classmethod
+	def check_distance(cls, range, p0, p1):
+		if abs(p1[0] - p0[0]) + abs(p1[1] - p0[1]) <= range:
+			return True
+		return False
+
 	def __init__(self):
 		# Load the environment model.
 		self.model = base.loader.loadModel("terrain")
@@ -63,15 +76,11 @@ class Terrain(object):
 		self.selection_image.setXelVal(x, y, SEL_CURS)
 
 	def _display_range(self, center, radius, value):
-		for y in range(center[1]-radius, center[1]+radius+1):
-			for x in range(center[0]-radius, center[0]+radius+1):
-				if x < 0 or x >= MAP_SIZE or y < 0 or y >= MAP_SIZE:
-					continue
-
-				distance = abs(x-center[0]) + abs(y-center[1])
-				if distance <= radius:
-					old = self.selection_image.getGrayVal(x, y)
-					self.selection_image.setXelVal(x, y, old+value)
+		for x, y in Terrain._iterate_circle(center, radius):
+			if x < 0 or x >= MAP_SIZE or y < 0 or y >= MAP_SIZE:
+				continue
+			old = self.selection_image.getGrayVal(x, y)
+			self.selection_image.setXelVal(x, y, old+value)
 
 	def display_move_range(self, player):
 		center = player.grid_position
