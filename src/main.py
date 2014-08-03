@@ -97,13 +97,19 @@ class Game(ShowBase):
 			if dead_enemy in self.active_set:
 				self.active_set.remove(dead_enemy)
 		self.enemies = [e for e in self.enemies if e.health > 0]
-		if not self.enemies:
+		if not self.enemies or self.player.health <= 0:
+			self.player = CombatPlayer("Player")
+			self.player.roll_intiative()
+
+			self.enemies = []
 			for i in range(3):
 				enemy = CombatPlayer(i)
 				enemy.grid_position = CombatTerrain.get_random_tile()
 				enemy.roll_intiative()
 				enemy.target = self.player
 				self.enemies.append(enemy)
+
+			self.active_set = []
 
 		# Get current participants
 		participants = [self.player] + self.enemies
@@ -119,13 +125,16 @@ class Game(ShowBase):
 				participant.action_set = ["ATTACK", "MOVE"]
 
 		current_player = self.active_set[0]
-		if current_player != self.player:
+		if current_player != self.player and current_player.target:
 			center = current_player.grid_position
 			radius = current_player.movement
 			target = current_player.target.grid_position
 			closest = CombatTerrain.find_closest_in_range(center, radius, target)
 			if closest:
 				current_player.grid_position = closest
+			center = current_player.grid_position
+			if CombatTerrain.check_distance(current_player.range, center, target):
+				current_player.target.health -= current_player.damage
 			current_player.action_set = []
 
 		if not current_player.action_set:
