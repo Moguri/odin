@@ -15,6 +15,8 @@ class Player(object):
 
 		self.name = name
 
+		self.target = None
+
 		self.action_set = ["MOVE", "ATTACK"]
 
 		self.atb = 0

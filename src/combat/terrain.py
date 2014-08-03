@@ -49,6 +49,25 @@ class Terrain(object):
 			return True
 		return False
 
+	@classmethod
+	def get_distance(cls, p0, p1):
+		return abs(p1[0] - p0[0]) + abs(p1[1] - p0[1])
+
+	@classmethod
+	def find_closest_in_range(cls, center, radius, target_pos):
+		closest = None
+		for x, y in Terrain._iterate_circle(center, radius):
+			if not closest:
+				closest = [x, y]
+			else:
+				cur_dist = Terrain.get_distance(closest, target_pos)
+				new_dist = Terrain.get_distance((x, y), target_pos)
+
+				if new_dist < cur_dist:
+					closest = [x, y]
+
+		return closest + [0]
+
 	def __init__(self):
 		# Load the environment model.
 		self.model = base.loader.loadModel("terrain")

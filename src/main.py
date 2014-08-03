@@ -102,6 +102,7 @@ class Game(ShowBase):
 				enemy = CombatPlayer(i)
 				enemy.grid_position = CombatTerrain.get_random_tile()
 				enemy.roll_intiative()
+				enemy.target = self.player
 				self.enemies.append(enemy)
 
 		# Get current participants
@@ -119,6 +120,12 @@ class Game(ShowBase):
 
 		current_player = self.active_set[0]
 		if current_player != self.player:
+			center = current_player.grid_position
+			radius = current_player.movement
+			target = current_player.target.grid_position
+			closest = CombatTerrain.find_closest_in_range(center, radius, target)
+			if closest:
+				current_player.grid_position = closest
 			current_player.action_set = []
 
 		if not current_player.action_set:
