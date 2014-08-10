@@ -1,18 +1,10 @@
 from __future__ import print_function
 
 from cefpython3 import cefpython
-from direct.showbase.ShowBase import ShowBase
 from panda3d.core import *
 
-import sys
 import os
 import atexit
-
-from panda3d.core import loadPrcFileData
-# loadPrcFileData("", "Panda3D example -- Transparent window")
-loadPrcFileData("", "fullscreen 0")
-loadPrcFileData("", "win-size 1600 900")
-loadPrcFileData("", "textures-power-2 none")
 
 
 class CefClientHandler:
@@ -45,14 +37,8 @@ class CefClientHandler:
 		print("load error", browser, frame, errorCode, errorText, failedURL)
 
 
-class OdinGame(ShowBase):
+class CefMixin(object):
 	_UI_SCALE = 1.0
-
-	def __init__(self):
-		ShowBase.__init__(self)
-		self.accept('escape', sys.exit)
-
-		self._setup_cef()
 
 	def _setup_cef(self):
 		cefpython.Initialize({
@@ -126,7 +112,3 @@ class OdinGame(ShowBase):
 			self.browser.SendMouseMoveEvent(x, y, mouseLeave=False)
 
 		return task.cont
-
-if __name__ == "__main__":
-	app = OdinGame()
-	app.run()

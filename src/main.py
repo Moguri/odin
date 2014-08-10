@@ -1,7 +1,12 @@
+
 import sys
 
 import os
 os.environ['PANDA_PRC_DIR'] = os.path.join(os.path.dirname(__file__), 'etc')
+
+# This import should be kept near the top to avoid issues with CEF/Chromium hooking malloc
+from cefexample import CefMixin
+
 
 from direct.showbase.ShowBase import ShowBase
 
@@ -11,7 +16,10 @@ from combat.terrain import Terrain as CombatTerrain, MAP_SIZE
 from combat.player import Player as CombatPlayer
 
 
-class Game(ShowBase):
+loadPrcFileData("", "textures-power-2 none")
+
+
+class Game(ShowBase, CefMixin):
 	def __init__(self):
 		ShowBase.__init__(self)
 
@@ -28,6 +36,8 @@ class Game(ShowBase):
 		self.accept("1", self.enter_move_mode)
 		self.accept("2", self.enter_attack_mode)
 		self.accept("3", self.end_turn)
+
+		self._setup_cef()
 
 		self.terrain = CombatTerrain()
 		self.player = CombatPlayer("Player")
