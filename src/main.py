@@ -40,6 +40,7 @@ class Game(ShowBase):
 		self.win.setCloseRequestEvent("escape")
 
 		self.ui = CEFPanda()
+		self.accept("space", self.ui.execute_js, ["setActiveSelection(1)"])
 
 		self.terrain = CombatTerrain()
 		self.player = CombatPlayer("Player")
