@@ -103,12 +103,12 @@ class CefMixin(object):
 	def _cef_message_loop(self, task):
 		cefpython.MessageLoopWork()
 
-		if base.mouseWatcherNode.has_mouse():
-			mouse = base.mouseWatcherNode.getMouse()
-			rx, ry = mouse.get_x(), mouse.get_y()
-			x = (rx + 1.0) / 2.0 * self._cef_texture.get_x_size()
-			y = (ry + 1.0) / 2.0 * self._cef_texture.get_y_size()
-			y = self._cef_texture.get_y_size() - y
-			self.browser.SendMouseMoveEvent(x, y, mouseLeave=False)
+		# if base.mouseWatcherNode.has_mouse():
+		# 	mouse = base.mouseWatcherNode.getMouse()
+		# 	rx, ry = mouse.get_x(), mouse.get_y()
+		# 	x = (rx + 1.0) / 2.0 * self._cef_texture.get_x_size()
+		# 	y = (ry + 1.0) / 2.0 * self._cef_texture.get_y_size()
+		# 	y = self._cef_texture.get_y_size() - y
+		# 	self.browser.SendMouseMoveEvent(x, y, mouseLeave=False)
 
 		return task.cont
