@@ -37,10 +37,10 @@ class CefClientHandler:
 		print("load error", browser, frame, errorCode, errorText, failedURL)
 
 
-class CefMixin(object):
+class CEFPanda(object):
 	_UI_SCALE = 1.0
 
-	def _setup_cef(self):
+	def __init__(self):
 		cefpython.Initialize({
 			"log_severity": cefpython.LOGSEVERITY_INFO,
 			"release_dcheck_enabled": True,  # Enable only when debugging
@@ -76,9 +76,9 @@ class CefMixin(object):
 		self.browser.SetClientHandler(CefClientHandler(self.browser, self._cef_texture))
 
 		self._set_browser_size()
-		self.accept('window-event', self._set_browser_size)
+		base.accept('window-event', self._set_browser_size)
 
-		self.taskMgr.add(self._cef_message_loop, "CefMessageLoop")
+		base.taskMgr.add(self._cef_message_loop, "CefMessageLoop")
 
 		def shutdown_cef():
 			cefpython.Shutdown()
