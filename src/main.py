@@ -23,7 +23,7 @@ class Game(ShowBase):
 	def __init__(self):
 		ShowBase.__init__(self)
 
-		self.accept("escape", sys.exit)
+		self.accept("f1", sys.exit)
 		self.accept("arrow_up", self.sel_up)
 		self.accept("arrow_left", self.sel_left)
 		self.accept("arrow_down", self.sel_down)
@@ -33,14 +33,15 @@ class Game(ShowBase):
 		self.accept("arrow_down-repeat", self.sel_down)
 		self.accept("arrow_right-repeat", self.sel_right)
 		self.accept("enter", self.accept_selection)
+		self.accept("escape", self.escape)
 		self.accept("1", self.enter_move_mode)
 		self.accept("2", self.enter_attack_mode)
 		self.accept("3", self.end_turn)
 
-		self.win.setCloseRequestEvent("escape")
+		self.win.setCloseRequestEvent("f1")
 
 		self.ui = CEFPanda()
-		self.accept("space", self.ui.execute_js, ["setActiveSelection(1)"])
+		# self.accept("space", self.ui.execute_js, ["setActiveSelection(1)"])
 
 		self.terrain = CombatTerrain()
 		self.player = CombatPlayer("Player")
@@ -56,8 +57,13 @@ class Game(ShowBase):
 
 		self.taskMgr.add(self.main_loop, "MainLoop")
 
+		self.ui_selection = 0
+
 		self.selected_pos = [16, 16, 0]
 
+		self.mode = "NONE"
+
+	def escape(self):
 		self.mode = "NONE"
 
 	def accept_selection(self):
@@ -68,13 +74,20 @@ class Game(ShowBase):
 				self.player.grid_position = self.selected_pos[:]
 				self.player.action_set.remove("MOVE")
 				self.mode = "NONE"
-		if self.mode == "ATTACK":
+		elif self.mode == "ATTACK":
 			if CombatTerrain.check_distance(self.player.range, p0, p1):
 				for enemy in self.enemies:
 					if enemy.grid_position == self.selected_pos:
 						enemy.health -= self.player.damage
 						self.player.action_set.remove("ATTACK")
 						self.mode = "NONE"
+		else:
+			if self.ui_selection == 0:
+				self.enter_move_mode()
+			elif self.ui_selection == 1:
+				self.enter_attack_mode()
+			elif self.ui_selection == 2:
+				self.end_turn()
 
 	def enter_move_mode(self):
 		if "MOVE" in self.player.action_set:
@@ -87,18 +100,27 @@ class Game(ShowBase):
 	def end_turn(self):
 		print("clearing action set")
 		self.player.action_set = []
+		self.ui_selection = 0
 
 	def sel_up(self):
-		self.selected_pos[1] += 1
+		if self.mode in {"ATTACK", "MOVE"}:
+			self.selected_pos[1] += 1
+		else:
+			self.ui_selection -= 1
 
 	def sel_left(self):
-		self.selected_pos[0] -= 1
+		if self.mode in {"ATTACK", "MOVE"}:
+			self.selected_pos[0] -= 1
 
 	def sel_down(self):
-		self.selected_pos[1] -= 1
+		if self.mode in {"ATTACK", "MOVE"}:
+			self.selected_pos[1] -= 1
+		else:
+			self.ui_selection += 1
 
 	def sel_right(self):
-		self.selected_pos[0] += 1
+		if self.mode in {"ATTACK", "MOVE"}:
+			self.selected_pos[0] += 1
 
 	def main_loop(self, task):
 		# Bound selection
@@ -163,6 +185,13 @@ class Game(ShowBase):
 		if self.mode == "ATTACK":
 			self.terrain.display_attack_range(self.player)
 		self.terrain.update_selection()
+
+
+		if self.ui_selection > 2:
+			self.ui_selection = 0
+		elif self.ui_selection < 0:
+			self.ui_selection = 2
+		self.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
 		return task.cont
 
 app = Game()
