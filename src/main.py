@@ -8,7 +8,7 @@ os.environ['PANDA_PRC_DIR'] = os.path.join(os.path.dirname(__file__), 'etc')
 from cefexample import CEFPanda
 
 
-from direct.showbase.ShowBase import ShowBase
+from direct.showbase.ShowBase import ShowBase, DirectObject
 
 from panda3d.core import *
 
@@ -19,11 +19,8 @@ from combat.player import Player as CombatPlayer
 loadPrcFileData("", "textures-power-2 none")
 
 
-class Game(ShowBase):
+class CombatState(DirectObject.DirectObject):
 	def __init__(self):
-		ShowBase.__init__(self)
-
-		self.accept("f1", sys.exit)
 		self.accept("arrow_up", self.sel_up)
 		self.accept("arrow_left", self.sel_left)
 		self.accept("arrow_down", self.sel_down)
@@ -38,11 +35,6 @@ class Game(ShowBase):
 		self.accept("2", self.enter_attack_mode)
 		self.accept("3", self.end_turn)
 
-		self.win.setCloseRequestEvent("f1")
-
-		self.ui = CEFPanda()
-		# self.accept("space", self.ui.execute_js, ["setActiveSelection(1)"])
-
 		self.terrain = CombatTerrain()
 		self.player = CombatPlayer("Player")
 		self.player.roll_intiative()
@@ -50,12 +42,10 @@ class Game(ShowBase):
 		self.enemies = []
 		self.active_set = []
 
-		self.disableMouse()
-		self.camera.setPos(25, -25, 28)
-		self.camera.setHpr(45, -45, 0)
-		self.camLens.setFov(65)
-
-		self.taskMgr.add(self.main_loop, "MainLoop")
+		base.disableMouse()
+		base.camera.setPos(25, -25, 28)
+		base.camera.setHpr(45, -45, 0)
+		base.camLens.setFov(65)
 
 		self.ui_selection = 0
 
@@ -122,7 +112,7 @@ class Game(ShowBase):
 		if self.mode in {"ATTACK", "MOVE"}:
 			self.selected_pos[0] += 1
 
-	def main_loop(self, task):
+	def main_loop(self):
 		# Bound selection
 		self.selected_pos[0] = min(max(self.selected_pos[0], 0), MAP_SIZE-1)
 		self.selected_pos[1] = min(max(self.selected_pos[1], 0), MAP_SIZE-1)
@@ -186,13 +176,30 @@ class Game(ShowBase):
 			self.terrain.display_attack_range(self.player)
 		self.terrain.update_selection()
 
-
 		if self.ui_selection > 2:
 			self.ui_selection = 0
 		elif self.ui_selection < 0:
 			self.ui_selection = 2
-		self.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
+		base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
+
+
+class Game(ShowBase):
+	def __init__(self):
+		ShowBase.__init__(self)
+
+		self.accept("f1", sys.exit)
+		self.win.setCloseRequestEvent("f1")
+
+		self.ui = CEFPanda()
+
+		self.state = CombatState()
+
+		self.taskMgr.add(self.main_loop, "MainLoop")
+
+	def main_loop(self, task):
+		self.state.main_loop()
 		return task.cont
+
 
 app = Game()
 app.run()
