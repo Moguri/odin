@@ -79,6 +79,7 @@ class CombatState(DirectObject.DirectObject):
 						self.player.action_set.remove("ATTACK")
 						self.mode = "NONE"
 		elif self.mode == "STANCE":
+			self.player.action_set.remove("STANCE")
 			self.escape()
 		else:
 			if self.ui_selection == 0:
@@ -91,8 +92,9 @@ class CombatState(DirectObject.DirectObject):
 				self.end_turn()
 
 	def enter_stance_mode(self):
-		self.mode = "STANCE"
-		base.ui.execute_js("switchToMenu('stances')")
+		if "STANCE" in self.player.action_set:
+			self.mode = "STANCE"
+			base.ui.execute_js("switchToMenu('stances')")
 
 	def enter_move_mode(self):
 		if "MOVE" in self.player.action_set:
@@ -162,7 +164,7 @@ class CombatState(DirectObject.DirectObject):
 
 			self.active_set.sort(key=lambda x: x.atb)
 			for participant in self.active_set:
-				participant.action_set = ["ATTACK", "MOVE"]
+				participant.action_set = ["ATTACK", "MOVE", "STANCE"]
 
 		current_player = self.active_set[0]
 		if current_player != self.player and current_player.target:
