@@ -32,8 +32,9 @@
     <script>
         function setActiveSelection(idx) {
             $("#actions li").removeClass("active");
-
             $("#actions li").eq(idx).addClass("active");
+            $("#stances li").removeClass("active");
+            $("#stances li").eq(idx).addClass("active");
         }
 
         function switchToMenu(menu) {
@@ -61,6 +62,7 @@
                                 <h3 class="panel-title">Actions</h3>
                             </div>
                             <ul class="panel-body list-group">
+                                <li class="list-group-item">Stance</li>
                                 <li class="list-group-item">Move</li>
                                 <li class="list-group-item">Attack</li>
                                 <li class="list-group-item">End Turn</li>
@@ -73,10 +75,10 @@
                                 <h3 class="panel-title">Stances</h3>
                             </div>
                             <ul class="panel-body list-group">
-                                <li class="'list-group-item">Stance One</li>
-                                <li class="'list-group-item">Stance Two</li>
-                                <li class="'list-group-item">Stance Three</li>
-                                <li class="'list-group-item">Stance Four</li>
+                                <li class="list-group-item">Stance One</li>
+                                <li class="list-group-item">Stance Two</li>
+                                <li class="list-group-item">Stance Three</li>
+                                <li class="list-group-item">Stance Four</li>
                             </ul>
                         </div>
                     </div>

@@ -58,6 +58,9 @@ class CombatState(DirectObject.DirectObject):
 		self.mode = "NONE"
 
 	def escape(self):
+		if self.mode == "STANCE":
+			self.ui_selection = 0
+			base.ui.execute_js("switchToMenu('actions')")
 		self.mode = "NONE"
 
 	def accept_selection(self):
@@ -75,13 +78,21 @@ class CombatState(DirectObject.DirectObject):
 						enemy.health -= self.player.damage
 						self.player.action_set.remove("ATTACK")
 						self.mode = "NONE"
+		elif self.mode == "STANCE":
+			self.escape()
 		else:
 			if self.ui_selection == 0:
-				self.enter_move_mode()
+				self.enter_stance_mode()
 			elif self.ui_selection == 1:
-				self.enter_attack_mode()
+				self.enter_move_mode()
 			elif self.ui_selection == 2:
+				self.enter_attack_mode()
+			elif self.ui_selection == 3:
 				self.end_turn()
+
+	def enter_stance_mode(self):
+		self.mode = "STANCE"
+		base.ui.execute_js("switchToMenu('stances')")
 
 	def enter_move_mode(self):
 		if "MOVE" in self.player.action_set:
@@ -180,10 +191,10 @@ class CombatState(DirectObject.DirectObject):
 			self.terrain.display_attack_range(self.player)
 		self.terrain.update_selection()
 
-		if self.ui_selection > 2:
+		if self.ui_selection > 3:
 			self.ui_selection = 0
 		elif self.ui_selection < 0:
-			self.ui_selection = 2
+			self.ui_selection = 3
 		base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
 
 
