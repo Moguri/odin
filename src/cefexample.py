@@ -4,6 +4,7 @@ from cefpython3 import cefpython
 from panda3d.core import *
 
 import os
+import sys
 import atexit
 
 
@@ -67,7 +68,9 @@ class CEFPanda(object):
 		wininfo.SetAsOffscreen(winhnd)
 		wininfo.SetTransparentPainting(True)
 
-		url = "file://" + os.path.abspath("ui.html")
+		url = "" if sys.platform == "win32" else "file://"
+		url += os.path.abspath("ui.html")
+
 		self.browser = cefpython.CreateBrowserSync(
 			wininfo,
 			{},
