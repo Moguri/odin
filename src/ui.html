@@ -35,6 +35,16 @@
 
             $("#actions li").eq(idx).addClass("active");
         }
+
+        function switchToMenu(menu) {
+            console.log(".tab-content #" + menu);
+            $(".tab-content .tab-pane").hide();
+            $(".tab-content #" + menu).show();
+        }
+
+        $(document).ready(function() {
+            switchToMenu("actions");
+        });
     </script>
 </head>
 <body>
@@ -44,18 +54,33 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-3 col-md-2 sidebar fadeInRight">
-                <div  class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Actions</h3>
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="actions">
+                        <div  class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Actions</h3>
+                            </div>
+                            <ul class="panel-body list-group">
+                                <li class="list-group-item">Move</li>
+                                <li class="list-group-item">Attack</li>
+                                <li class="list-group-item">End Turn</li>
+                            </ul>
+                        </div>
                     </div>
-                    <ul id="actions" class="panel-body list-group">
-                        <li class="list-group-item">Move</li>
-                        <li class="list-group-item">Attack</li>
-                        <li class="list-group-item">End Turn</li>
-                    </ul>
+                    <div class="tab-pane fade in active" id="stances">
+                        <div  class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Stances</h3>
+                            </div>
+                            <ul class="panel-body list-group">
+                                <li class="'list-group-item">Stance One</li>
+                                <li class="'list-group-item">Stance Two</li>
+                                <li class="'list-group-item">Stance Three</li>
+                                <li class="'list-group-item">Stance Four</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             </div>
         </div>
     </div>
