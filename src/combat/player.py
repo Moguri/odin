@@ -16,6 +16,7 @@ class Stance(object):
 class Player(object):
 	def __init__(self, name=''):
 		self._movement = 3
+		self.remaining_movement = 0
 		self._range = 5
 		self._damage = 1
 		self.health = 1

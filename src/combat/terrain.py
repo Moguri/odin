@@ -103,7 +103,7 @@ class Terrain(object):
 
 	def display_move_range(self, player):
 		center = player.grid_position
-		radius = player.movement
+		radius = player.remaining_movement
 		self._display_range(center, radius, SEL_MOVE)
 
 	def display_attack_range(self, player):

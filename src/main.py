@@ -67,10 +67,13 @@ class CombatState(DirectObject.DirectObject):
 		p0 = self.player.grid_position
 		p1 = self.selected_pos
 		if self.mode == "MOVE":
-			if CombatTerrain.check_distance(self.player.movement, p0, p1):
+			distance = CombatTerrain.get_distance(p0, p1)
+			if distance <= self.player.remaining_movement:
 				self.player.grid_position = self.selected_pos[:]
-				self.player.action_set.remove("MOVE")
-				base.ui.execute_js("disableItem('MOVE')")
+				self.player.remaining_movement -= distance
+				if self.player.remaining_movement <= 0:
+					self.player.action_set.remove("MOVE")
+					base.ui.execute_js("disableItem('MOVE')")
 				self.mode = "NONE"
 		elif self.mode == "ATTACK":
 			if CombatTerrain.check_distance(self.player.range, p0, p1):
@@ -168,6 +171,7 @@ class CombatState(DirectObject.DirectObject):
 			self.active_set.sort(key=lambda x: x.atb)
 			for participant in self.active_set:
 				participant.action_set = ["ATTACK", "MOVE", "STANCE"]
+				participant.remaining_movement = participant.movement
 				for i in participant.action_set:
 					base.ui.execute_js("enableItem('%s')" % i)
 
