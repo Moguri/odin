@@ -1,4 +1,5 @@
 import random
+import json
 
 from panda3d.core import *
 
@@ -15,6 +16,25 @@ class Stance(object):
 
 
 class Player(object):
+	@classmethod
+	def from_player_chassis(cls, name):
+		path = "data/pc_%s.json" % name
+		with open(path) as fin:
+			data = json.load(fin)
+
+		pretty_name = " ".join([i.upper() for i in name.split("_")])
+		player = Player(pretty_name)
+
+		for key, value in data.iteritems():
+			if hasattr(player, "_"+key):
+				setattr(player, "_" + key, value)
+			elif hasattr(player, key):
+				setattr(player, key, value)
+			else:
+				print("Invalid player chassis key: %s" % key)
+
+		return player
+
 	def __init__(self, name=''):
 		self._movement = 3
 		self.remaining_movement = 0

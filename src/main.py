@@ -154,7 +154,7 @@ class CombatState(DirectObject.DirectObject):
 
 			self.enemies = []
 			for i in range(3):
-				enemy = CombatPlayer(i)
+				enemy = CombatPlayer.from_player_chassis("clay_golem")
 				enemy.grid_position = CombatTerrain.get_random_tile()
 				enemy.roll_intiative()
 				enemy.target = self.player
