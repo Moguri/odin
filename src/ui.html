@@ -42,6 +42,15 @@
             $(".tab-content #" + menu).show();
         }
 
+        function enableItem(item) {
+            $("#" + item).removeClass("disabled");
+        }
+
+        function disableItem(item) {
+
+            $("#" + item).addClass("disabled");
+        }
+
         $(document).ready(function() {
             switchToMenu("actions");
         });
@@ -61,9 +70,9 @@
                                 <h3 class="panel-title">Actions</h3>
                             </div>
                             <ul class="panel-body list-group">
-                                <li class="list-group-item">Stance</li>
-                                <li class="list-group-item">Move</li>
-                                <li class="list-group-item">Attack</li>
+                                <li id="STANCE" class="list-group-item">Stance</li>
+                                <li id="MOVE" class="list-group-item">Move</li>
+                                <li id="ATTACK" class="list-group-item">Attack</li>
                                 <li class="list-group-item">End Turn</li>
                             </ul>
                         </div>
