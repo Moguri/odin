@@ -6,6 +6,10 @@ from panda3d.core import *
 from .terrain import Terrain
 
 
+STAT_MOVEMENT, STAT_RANGE, STAT_DAMAGE, STAT_DEFENSE, STAT_REGEN, STAT_SPEED = range(6)
+STAT_SCALE = [10.0, 10.0, 2.0, 2.0, 0.0, 4.0]
+
+
 class Stance(object):
 	def __init__(self):
 		self.name = "Stance"
@@ -25,13 +29,25 @@ class Player(object):
 		pretty_name = " ".join([i.upper() for i in name.split("_")])
 		player = Player(pretty_name)
 
-		for key, value in data.iteritems():
-			if hasattr(player, "_"+key):
-				setattr(player, "_" + key, value)
-			elif hasattr(player, key):
-				setattr(player, key, value)
-			else:
-				print("Invalid player chassis key: %s" % key)
+		stat_vector = [float(i) for i in data["stat_vector"]]
+		if len(stat_vector) != 6:
+			print("Incorrectly sized stat vector for player chassis: %s" % name)
+			return player
+
+		norm = sum(stat_vector)
+		if norm == 0:
+			print("Zero stat vector for player chassis: %s" % name)
+			return player
+
+		for i, value in enumerate(stat_vector):
+			stat_vector[i] = value / norm * STAT_SCALE[i]
+
+		player._movement = round(stat_vector[STAT_MOVEMENT])
+		player._range = round(stat_vector[STAT_RANGE])
+		player._damage = stat_vector[STAT_DAMAGE]
+		# TODO: Add defense
+		# TODO: Add regen
+		player._speed = round(stat_vector[STAT_SPEED])
 
 		return player
 
