@@ -7,6 +7,7 @@ from .terrain import Terrain
 
 class Stance(object):
 	def __init__(self):
+		self.name = "Stance"
 		self.movement = 0
 		self.range = 0
 		self.damage = 0

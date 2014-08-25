@@ -88,8 +88,13 @@ class CEFPanda(object):
 
 		atexit.register(shutdown_cef)
 
-	def execute_js(self, js):
-		self.browser.GetMainFrame().ExecuteJavascript(js)
+	def execute_js(self, js, onload=False):
+		def cb(*args, **kwargs):
+			self.browser.GetMainFrame().ExecuteJavascript(js)
+		if onload:
+			self.browser.SetClientCallback("OnLoadEnd", cb)
+		else:
+			cb()
 
 	def _set_browser_size(self, window=None):
 		width = int(round(base.win.getXSize() * self._UI_SCALE))

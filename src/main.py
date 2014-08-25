@@ -147,6 +147,8 @@ class CombatState(DirectObject.DirectObject):
 		self.enemies = [e for e in self.enemies if e.health > 0]
 		if not self.enemies or self.player.health <= 0:
 			self.player = CombatPlayer("Player")
+			stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
+			base.ui.execute_js("setStances(%s)" % stance_str, onload=True)
 			self.player.roll_intiative()
 
 			self.enemies = []

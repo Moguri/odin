@@ -30,6 +30,12 @@
     <meta charset="UTF-8">
     <title></title>
     <script>
+        function setStances(stances) {
+            stances.forEach(function (i) {
+                $("#stance-list").append("<li class='list-group-item'>" + i + "</li>");
+            });
+        }
+
         function setActiveSelection(idx) {
             $("#actions li").removeClass("active");
             $("#actions li").eq(idx).addClass("active");
@@ -82,11 +88,7 @@
                             <div class="panel-heading">
                                 <h3 class="panel-title">Stances</h3>
                             </div>
-                            <ul class="panel-body list-group">
-                                <li class="list-group-item">Stance One</li>
-                                <li class="list-group-item">Stance Two</li>
-                                <li class="list-group-item">Stance Three</li>
-                                <li class="list-group-item">Stance Four</li>
+                            <ul id="stance-list" class="panel-body list-group">
                             </ul>
                         </div>
                     </div>
