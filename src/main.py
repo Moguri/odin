@@ -115,6 +115,7 @@ class CombatState(DirectObject.DirectObject):
 		print("clearing action set")
 		self.player.action_set = []
 		self.ui_selection = 0
+		self.mode = "NONE"
 
 	def sel_up(self):
 		if self.mode in {"ATTACK", "MOVE"}:
@@ -203,6 +204,8 @@ class CombatState(DirectObject.DirectObject):
 			self.terrain.display_move_range(self.player)
 		if self.mode == "ATTACK":
 			self.terrain.display_attack_range(self.player)
+		if self.mode == "NONE":
+			self.selected_pos = self.player.grid_position[:]
 		self.terrain.update_selection()
 
 		if self.mode == "STANCE":
