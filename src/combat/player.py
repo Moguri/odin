@@ -40,7 +40,7 @@ class Player(object):
 		temp_stance = Stance()
 		temp_stance.range = 5
 		self.stances = [temp_stance]
-		self.active_stance = self.stances[0]
+		self.active_stance = None
 
 	def __del__(self):
 		self.model.removeNode()

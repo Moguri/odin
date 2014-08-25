@@ -84,6 +84,7 @@ class CombatState(DirectObject.DirectObject):
 						base.ui.execute_js("disableItem('ATTACK')")
 						self.mode = "NONE"
 		elif self.mode == "STANCE":
+			self.player.active_stance = self.player.stances[self.ui_selection]
 			self.player.action_set.remove("STANCE")
 			base.ui.execute_js("disableItem('STANCE')")
 			self.escape()
