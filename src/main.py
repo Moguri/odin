@@ -204,10 +204,15 @@ class CombatState(DirectObject.DirectObject):
 			self.terrain.display_attack_range(self.player)
 		self.terrain.update_selection()
 
-		if self.ui_selection > 3:
+		if self.mode == "STANCE":
+			ui_max = len(self.player.stances) - 1
+		else:
+			ui_max = 3
+
+		if self.ui_selection > ui_max:
 			self.ui_selection = 0
 		elif self.ui_selection < 0:
-			self.ui_selection = 3
+			self.ui_selection = ui_max
 		base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
 
 
