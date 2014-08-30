@@ -35,6 +35,8 @@ class CombatState(DirectObject.DirectObject):
 		self.accept("2", self.enter_attack_mode)
 		self.accept("3", self.end_turn)
 
+		base.ui.load('ui.html')
+
 		def stm():
 			base.ui.execute_js("switchToMenu('stances')")
 		self.accept("space", stm)
@@ -218,6 +220,34 @@ class CombatState(DirectObject.DirectObject):
 		elif self.ui_selection < 0:
 			self.ui_selection = ui_max
 		base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
+
+
+class LobbyState(DirectObject.DirectObject):
+	def __init__(self):
+		self.accept("arrow_up", self.sel_up)
+		# self.accept("arrow_left", self.sel_left)
+		self.accept("arrow_down", self.sel_down)
+		# self.accept("arrow_right", self.sel_right)
+		self.accept("arrow_up-repeat", self.sel_up)
+		# self.accept("arrow_left-repeat", self.sel_left)
+		self.accept("arrow_down-repeat", self.sel_down)
+		# self.accept("arrow_right-repeat", self.sel_right)
+		self.accept("enter", self.accept_selection)
+		self.accept("escape", self.escape)
+
+		self.ui_selection = 0
+
+	def accept_selection(self):
+		pass
+
+	def escape(self):
+		pass
+
+	def sel_up(self):
+		self.ui_selection -= 1
+
+	def sel_down(self):
+		self.ui_selection += 1
 
 
 class Game(ShowBase):

@@ -68,13 +68,10 @@ class CEFPanda(object):
 		wininfo.SetAsOffscreen(winhnd)
 		wininfo.SetTransparentPainting(True)
 
-		url = "" if sys.platform == "win32" else "file://"
-		url += os.path.abspath("ui.html")
-
 		self.browser = cefpython.CreateBrowserSync(
 			wininfo,
 			{},
-			navigateUrl=url
+			navigateUrl=''
 		)
 		self.browser.SetClientHandler(CefClientHandler(self.browser, self._cef_texture))
 
@@ -87,6 +84,10 @@ class CEFPanda(object):
 			cefpython.Shutdown()
 
 		atexit.register(shutdown_cef)
+
+	def load(self, url):
+		url = os.path.abspath(url if sys.platform == "win32" else "file://" + url)
+		self.browser.GetMainFrame().LoadUrl(url)
 
 	def execute_js(self, js, onload=False):
 		def cb(*args, **kwargs):
