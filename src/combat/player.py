@@ -42,12 +42,12 @@ class Player(object):
 		for i, value in enumerate(stat_vector):
 			stat_vector[i] = value / norm * STAT_SCALE[i]
 
-		player._movement = round(stat_vector[STAT_MOVEMENT])
-		player._range = round(stat_vector[STAT_RANGE])
+		player._movement = int(round(stat_vector[STAT_MOVEMENT]))
+		player._range = int(round(stat_vector[STAT_RANGE]))
 		player._damage = stat_vector[STAT_DAMAGE]
 		# TODO: Add defense
 		# TODO: Add regen
-		player._speed = round(stat_vector[STAT_SPEED])
+		player._speed = int(round(stat_vector[STAT_SPEED]))
 
 		return player
 
