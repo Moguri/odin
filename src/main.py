@@ -255,7 +255,7 @@ class LobbyState(DirectObject.DirectObject):
 			if self.mode == "STUDENT_INFO":
 				pass
 			elif self.mode == "COURSEWORK":
-				pass
+				base.state = CombatState()
 			elif self.mode == "OPTIONS":
 				pass
 			elif self.mode == "QUIT":
