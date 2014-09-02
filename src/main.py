@@ -225,29 +225,65 @@ class CombatState(DirectObject.DirectObject):
 class LobbyState(DirectObject.DirectObject):
 	def __init__(self):
 		self.accept("arrow_up", self.sel_up)
-		# self.accept("arrow_left", self.sel_left)
+		self.accept("arrow_left", self.sel_up)
 		self.accept("arrow_down", self.sel_down)
-		# self.accept("arrow_right", self.sel_right)
+		self.accept("arrow_right", self.sel_down)
 		self.accept("arrow_up-repeat", self.sel_up)
-		# self.accept("arrow_left-repeat", self.sel_left)
+		self.accept("arrow_left-repeat", self.sel_up)
 		self.accept("arrow_down-repeat", self.sel_down)
-		# self.accept("arrow_right-repeat", self.sel_right)
+		self.accept("arrow_right-repeat", self.sel_down)
 		self.accept("enter", self.accept_selection)
 		self.accept("escape", self.escape)
 
-		self.ui_selection = 0
+		base.ui.load('lobby_ui.html')
+
+		self.ui_last = self.ui_selection = 0
+		self.ui_options = [
+			"STUDENT_INFO",
+			"COURSEWORK",
+			"OPTIONS",
+			"QUIT",
+		]
+		self.mode = None
+		base.ui.execute_js("setActiveTab(%d)" % self.ui_selection, True)
 
 	def accept_selection(self):
-		pass
+		if self.mode is None:
+			self.mode = self.ui_options[self.ui_selection]
+			self.ui_selection = 0
+	
+			if self.mode == "STUDENT_INFO":
+				pass
+			elif self.mode == "COURSEWORK":
+				pass
+			elif self.mode == "OPTIONS":
+				pass
+			elif self.mode == "QUIT":
+				sys.exit()
 
 	def escape(self):
-		pass
+		if self.mode is not None:
+			self.ui_selection = self.ui_options.index(self.mode)
+			self.mode = None
 
 	def sel_up(self):
 		self.ui_selection -= 1
 
 	def sel_down(self):
 		self.ui_selection += 1
+
+	def main_loop(self):
+
+		ui_max = 3
+		if self.ui_selection > ui_max:
+			self.ui_selection = 0
+		elif self.ui_selection < 0:
+			self.ui_selection = ui_max
+
+		if self.ui_last != self.ui_selection:
+			if self.mode is None:
+				base.ui.execute_js("setActiveTab(%d)" % self.ui_selection)
+			self.ui_last = self.ui_selection
 
 
 class Game(ShowBase):
@@ -259,7 +295,7 @@ class Game(ShowBase):
 
 		self.ui = CEFPanda()
 
-		self.state = CombatState()
+		self.state = LobbyState()
 
 		self.taskMgr.add(self.main_loop, "MainLoop")
 
