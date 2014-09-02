@@ -75,6 +75,9 @@ class CEFPanda(object):
 		)
 		self.browser.SetClientHandler(CefClientHandler(self.browser, self._cef_texture))
 
+		self._js_onload_queue = []
+		self.browser.SetClientCallback("OnLoadEnd", self._load_end)
+
 		self._set_browser_size()
 		base.accept('window-event', self._set_browser_size)
 
@@ -85,17 +88,22 @@ class CEFPanda(object):
 
 		atexit.register(shutdown_cef)
 
+	def _load_end(self, *args, **kwargs):
+		# Execute any queued javascript
+		for i in self._js_onload_queue:
+			self.execute_js(i)
+
+		self._js_onload_queue = []
+
 	def load(self, url):
 		url = os.path.abspath(url if sys.platform == "win32" else "file://" + url)
 		self.browser.GetMainFrame().LoadUrl(url)
 
 	def execute_js(self, js, onload=False):
-		def cb(*args, **kwargs):
-			self.browser.GetMainFrame().ExecuteJavascript(js)
 		if onload:
-			self.browser.SetClientCallback("OnLoadEnd", cb)
+			self._js_onload_queue.append(js)
 		else:
-			cb()
+			self.browser.GetMainFrame().ExecuteJavascript(js)
 
 	def _set_browser_size(self, window=None):
 		width = int(round(base.win.getXSize() * self._UI_SCALE))

@@ -54,6 +54,7 @@ class CombatState(DirectObject.DirectObject):
 		base.camLens.setFov(65)
 
 		self.ui_last = self.ui_selection = 0
+		base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection, True)
 
 		self.selected_pos = [16, 16, 0]
 
