@@ -108,17 +108,20 @@ class CEFPanda(object):
 	def _set_browser_size(self, window=None):
 		width = int(round(base.win.getXSize() * self._UI_SCALE))
 		height = int(round(base.win.getYSize() * self._UI_SCALE))
-		self._cef_texture.set_x_size(width)
-		self._cef_texture.set_y_size(height)
 
-		# Clear the texture
-		img = PNMImage(width, height)
-		img.fill(0, 0, 0)
-		img.alpha_fill(0)
-		self._cef_texture.load(img)
-		# img = CPTA_uchar(PTA_uchar.empty_array(self._cef_texture.get_expected_ram_image_size()))
-		# self._cef_texture.set_ram_image(img)
-		self.browser.WasResized()
+		# We only want to resize if the window size actually changed.
+		if self._cef_texture.get_x_size() == width and self._cef_texture.get_y_size() == height:
+			self._cef_texture.set_x_size(width)
+			self._cef_texture.set_y_size(height)
+
+			# Clear the texture
+			img = PNMImage(width, height)
+			img.fill(0, 0, 0)
+			img.alpha_fill(0)
+			self._cef_texture.load(img)
+			# img = CPTA_uchar(PTA_uchar.empty_array(self._cef_texture.get_expected_ram_image_size()))
+			# self._cef_texture.set_ram_image(img)
+			self.browser.WasResized()
 
 	def _cef_message_loop(self, task):
 		cefpython.MessageLoopWork()
