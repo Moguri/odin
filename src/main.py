@@ -53,7 +53,7 @@ class CombatState(DirectObject.DirectObject):
 		base.camera.setHpr(45, -45, 0)
 		base.camLens.setFov(65)
 
-		self.ui_selection = 0
+		self.ui_last = self.ui_selection = 0
 
 		self.selected_pos = [16, 16, 0]
 
@@ -219,7 +219,10 @@ class CombatState(DirectObject.DirectObject):
 			self.ui_selection = 0
 		elif self.ui_selection < 0:
 			self.ui_selection = ui_max
-		base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
+
+		if self.ui_last != self.ui_selection:
+			base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
+			self.ui_last = self.ui_selection
 
 
 class LobbyState(DirectObject.DirectObject):
