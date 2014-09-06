@@ -60,6 +60,27 @@ class CombatState(DirectObject.DirectObject):
 
 		self.mode = "NONE"
 
+		# Setup the combatants
+		self.player = CombatPlayer("Player")
+		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
+		base.ui.execute_js("setStances(%s)" % stance_str, onload=True)
+		self.player.roll_intiative()
+
+		self.enemies = []
+		for i in range(3):
+			enemy = CombatPlayer.from_player_chassis("clay_golem")
+			enemy.grid_position = CombatTerrain.get_random_tile()
+			enemy.roll_intiative()
+			enemy.target = self.player
+			self.enemies.append(enemy)
+
+		self.active_set = []
+
+	def destroy(self):
+		self.ignoreAll()
+		for n in base.render.getChildren():
+			n.removeNode()
+
 	def escape(self):
 		if self.mode == "STANCE":
 			self.ui_selection = 0
@@ -145,26 +166,14 @@ class CombatState(DirectObject.DirectObject):
 		self.selected_pos[0] = min(max(self.selected_pos[0], 0), MAP_SIZE-1)
 		self.selected_pos[1] = min(max(self.selected_pos[1], 0), MAP_SIZE-1)
 
-		# Track remaining enemies and add new ones if none are left
+		# Track remaining enemies and and exit if none are left
 		for dead_enemy in [e for e in self.enemies if e.health <= 0]:
 			if dead_enemy in self.active_set:
 				self.active_set.remove(dead_enemy)
 		self.enemies = [e for e in self.enemies if e.health > 0]
 		if not self.enemies or self.player.health <= 0:
-			self.player = CombatPlayer("Player")
-			stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
-			base.ui.execute_js("setStances(%s)" % stance_str, onload=True)
-			self.player.roll_intiative()
-
-			self.enemies = []
-			for i in range(3):
-				enemy = CombatPlayer.from_player_chassis("clay_golem")
-				enemy.grid_position = CombatTerrain.get_random_tile()
-				enemy.roll_intiative()
-				enemy.target = self.player
-				self.enemies.append(enemy)
-
-			self.active_set = []
+			base.change_state(LobbyState)
+			return
 
 		# Get current participants
 		participants = [self.player] + self.enemies
@@ -251,6 +260,9 @@ class LobbyState(DirectObject.DirectObject):
 		self.mode = None
 		base.ui.execute_js("setActiveTab(%d)" % self.ui_selection, True)
 
+	def destroy(self):
+		self.ignoreAll()
+
 	def accept_selection(self):
 		if self.mode is None:
 			self.mode = self.ui_options[self.ui_selection]
@@ -259,7 +271,7 @@ class LobbyState(DirectObject.DirectObject):
 			if self.mode == "STUDENT_INFO":
 				pass
 			elif self.mode == "COURSEWORK":
-				base.state = CombatState()
+				base.change_state(CombatState)
 			elif self.mode == "OPTIONS":
 				pass
 			elif self.mode == "QUIT":
@@ -302,6 +314,10 @@ class Game(ShowBase):
 		self.state = LobbyState()
 
 		self.taskMgr.add(self.main_loop, "MainLoop")
+
+	def change_state(self, new_state):
+		self.state.destroy()
+		self.state = new_state()
 
 	def main_loop(self, task):
 		self.state.main_loop()
