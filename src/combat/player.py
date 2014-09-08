@@ -28,6 +28,7 @@ class Player(object):
 
 		pretty_name = " ".join([i.upper() for i in name.split("_")])
 		player = Player(pretty_name)
+		player.model.setColor(0.961, 0.725, 0.012, 1.0)
 
 		stat_vector = [float(i) for i in data["stat_vector"]]
 		if len(stat_vector) != 6:
@@ -68,7 +69,9 @@ class Player(object):
 		self.atb = 0
 
 		self._grid_pos = [0, 0, 0]
+
 		self.model = base.loader.loadModel("player")
+		self.model.setColor(0.510, 0.0, 0.255)
 		self.model.reparentTo(base.render)
 
 		self.grid_position = [16, 16, 0]

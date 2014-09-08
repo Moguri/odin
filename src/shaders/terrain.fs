@@ -10,7 +10,7 @@ uniform sampler2D selection_map;
 out vec3 out_color;
 
 const float grid_size = 1.0;
-const float grid_width = 0.01;
+const float grid_width = 0.03;
 const int map_size = 32;
 
 const vec3 current_color = vec3(1.0);
@@ -23,7 +23,7 @@ const int SEL_ATTK = 1 << 2;
 
 void main()
 {
-	vec3 diffuse = vec3(0.5, 1.0, 0.0);
+	vec3 diffuse = vec3(0.125, 0.443, 0.039);
 	float specular = 50.0;
 
 	vec3 L = normalize(light_pos - vertex.xyz);
@@ -74,10 +74,10 @@ void main()
 		diff = mix(diff, sel_color, 1.0);
 	}
 
-	diff *= max(dot(N, L), 0.0);
+	//diff *= max(dot(N, L), 0.0);
 
-	vec3 spec = vec3(1.0, 1.0, 1.0);
-	spec *= pow(max(dot(R, E), 0.0), specular);
+	vec3 spec = vec3(0.0);//vec3(1.0, 1.0, 1.0);
+	//spec *= pow(max(dot(R, E), 0.0), specular);
 
 	out_color.rgb = (amb + diff + spec) * line;
 	// out_color.rgb = sel_color;
