@@ -17,6 +17,8 @@ class Stance(object):
 		self.movement = 0
 		self.range = 0
 		self.damage = 0
+		self.defense = 0
+		self.regen = 0
 		self.speed = 0
 
 
@@ -51,8 +53,8 @@ class Player(object):
 		player._movement = stat_vector[STAT_MOVEMENT]
 		player._range = stat_vector[STAT_RANGE]
 		player._damage = stat_vector[STAT_DAMAGE]
-		# TODO: Add defense
-		# TODO: Add regen
+		player._defense = stat_vector[STAT_DEFENSE]
+		player._regen = stat_vector[STAT_REGEN]
 		player._speed = stat_vector[STAT_SPEED]
 
 		return player
@@ -63,6 +65,8 @@ class Player(object):
 		self._range = 5
 		self._damage = 1
 		self.health = 1
+		self._defense = 0
+		self._regen = 0
 		self._speed = 2
 
 		self.name = name
@@ -116,6 +120,14 @@ class Player(object):
 	@property
 	def damage(self):
 		return self.__get_stance_attrib("damage")
+
+	@property
+	def defense(self):
+		return self.__get_stance_attrib("defense")
+
+	@property
+	def regen(self):
+		return self.__get_stance_attrib("regen")
 
 	@property
 	def speed(self):
