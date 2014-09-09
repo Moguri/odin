@@ -9,6 +9,7 @@ from cefexample import CEFPanda
 
 
 from direct.showbase.ShowBase import ShowBase, DirectObject
+from direct.interval.LerpInterval import LerpPosInterval
 
 from panda3d.core import *
 
@@ -75,6 +76,7 @@ class CombatState(DirectObject.DirectObject):
 			self.enemies.append(enemy)
 
 		self.active_set = []
+		self.move_interval = None
 
 	def destroy(self):
 		self.ignoreAll()
@@ -93,12 +95,16 @@ class CombatState(DirectObject.DirectObject):
 		if self.mode == "MOVE":
 			distance = CombatTerrain.get_distance(p0, p1)
 			if distance <= self.player.remaining_movement:
+				start_pos = self.player.model.getPos()
 				self.player.grid_position = self.selected_pos[:]
 				self.player.remaining_movement -= distance
 				if self.player.remaining_movement <= 0:
 					self.player.action_set.remove("MOVE")
 					base.ui.execute_js("disableItem('MOVE')")
-				self.mode = "NONE"
+				end_pos = self.player.model.getPos()
+				self.move_interval = self.player.model.posInterval(distance * 0.25, end_pos, start_pos)
+				self.move_interval.start()
+				self.mode = "ANIMATION"
 		elif self.mode == "ATTACK":
 			if CombatTerrain.check_distance(self.player.range, p0, p1):
 				for enemy in self.enemies:
@@ -162,6 +168,11 @@ class CombatState(DirectObject.DirectObject):
 			self.selected_pos[0] += 1
 
 	def main_loop(self):
+		# Reset anim mode
+		if self.move_interval is not None and self.move_interval.isStopped():
+			self.move_interval = None
+			self.mode = "NONE"
+
 		# Bound selection
 		self.selected_pos[0] = min(max(self.selected_pos[0], 0), MAP_SIZE-1)
 		self.selected_pos[1] = min(max(self.selected_pos[1], 0), MAP_SIZE-1)
