@@ -56,6 +56,9 @@ class Player(object):
 		player = Player(pretty_name)
 		player.model.setColor(0.961, 0.725, 0.012, 1.0)
 
+		if "stat_vector" not in data:
+			print("No stat_vector in player chassis: %s" % name)
+			return player
 		stat_vector = load_vector(name, data["stat_vector"])
 		for i, value in enumerate(stat_vector):
 			stat_vector[i] = value * STAT_SCALE[i]
@@ -67,6 +70,9 @@ class Player(object):
 		player._regen = stat_vector[STAT_REGEN]
 		player._speed = stat_vector[STAT_SPEED]
 
+		if "credit_vector" not in data:
+			print("No credit_vector in player chassis: %s" % name)
+			return player
 		player._credit_vector = load_vector(name, data["credit_vector"])
 
 		return player
