@@ -1,3 +1,4 @@
+import math
 import random
 import json
 
@@ -47,12 +48,12 @@ class Player(object):
 		for i, value in enumerate(stat_vector):
 			stat_vector[i] = value / norm * STAT_SCALE[i]
 
-		player._movement = int(round(stat_vector[STAT_MOVEMENT]))
-		player._range = int(round(stat_vector[STAT_RANGE]))
+		player._movement = stat_vector[STAT_MOVEMENT]
+		player._range = stat_vector[STAT_RANGE]
 		player._damage = stat_vector[STAT_DAMAGE]
 		# TODO: Add defense
 		# TODO: Add regen
-		player._speed = int(round(stat_vector[STAT_SPEED]))
+		player._speed = stat_vector[STAT_SPEED]
 
 		return player
 
@@ -100,14 +101,17 @@ class Player(object):
 		if retval < 0:
 			retval = 0
 		return retval
-		
+
+	def __get_stance_attribi(self, attrib):
+		return int(math.floor(self.__get_stance_attrib(attrib)))
+
 	@property
 	def movement(self):
-		return self.__get_stance_attrib("movement")
+		return self.__get_stance_attribi("movement")
 
 	@property
 	def range(self):
-		return self.__get_stance_attrib("range")
+		return self.__get_stance_attribi("range")
 
 	@property
 	def damage(self):
@@ -115,7 +119,7 @@ class Player(object):
 
 	@property
 	def speed(self):
-		return self.__get_stance_attrib("speed")
+		return self.__get_stance_attribi("speed")
 
 	@property
 	def grid_position(self):
