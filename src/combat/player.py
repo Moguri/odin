@@ -26,7 +26,11 @@ class Player(object):
 		with open(path) as fin:
 			data = json.load(fin)
 
-		pretty_name = " ".join([i.upper() for i in name.split("_")])
+		if "name" in data:
+			pretty_name = data["name"]
+		else:
+			pretty_name = " ".join([i.title() for i in name.split("_")])
+
 		player = Player(pretty_name)
 		player.model.setColor(0.961, 0.725, 0.012, 1.0)
 
