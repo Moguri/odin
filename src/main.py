@@ -172,6 +172,8 @@ class CombatState(DirectObject.DirectObject):
 		if self.move_interval is not None and self.move_interval.isStopped():
 			self.move_interval = None
 			self.mode = "NONE"
+		if self.mode == "ANIMATION":
+			return
 
 		# Bound selection
 		self.selected_pos[0] = min(max(self.selected_pos[0], 0), MAP_SIZE-1)
@@ -204,16 +206,27 @@ class CombatState(DirectObject.DirectObject):
 
 		current_player = self.active_set[0]
 		if current_player != self.player and current_player.target:
-			center = current_player.grid_position
-			radius = current_player.movement
 			target = current_player.target.grid_position
-			closest = CombatTerrain.find_closest_in_range(center, radius, target)
-			if closest:
-				current_player.grid_position = closest
-			center = current_player.grid_position
-			if CombatTerrain.check_distance(current_player.range, center, target):
-				current_player.target.health -= current_player.damage
-			current_player.action_set = []
+			if "MOVE" in current_player.action_set:
+				center = current_player.grid_position
+				radius = current_player.movement
+				closest = CombatTerrain.find_closest_in_range(center, radius, target)
+				if closest:
+					distance = CombatTerrain.get_distance(center, closest)
+					start_pos = current_player.model.getPos()
+					current_player.grid_position = closest
+					end_pos = current_player.model.getPos()
+					self.move_interval = current_player.model.posInterval(distance * 0.25, end_pos, start_pos)
+					self.move_interval.start()
+				current_player.action_set.remove("MOVE")
+				self.mode = "ANIMATION"
+			elif "ATTACK" in current_player.action_set:
+				center = current_player.grid_position
+				if CombatTerrain.check_distance(current_player.range, center, target):
+					current_player.target.health -= current_player.damage
+				current_player.action_set.remove("ATTACK")
+			else:
+				current_player.action_set = []
 
 		if not current_player.action_set:
 			print("%s has finished their turn" % current_player.name)
