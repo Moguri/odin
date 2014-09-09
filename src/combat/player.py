@@ -93,7 +93,7 @@ class Player(object):
 	def __del__(self):
 		self.model.removeNode()
 
-	def roll_intiative(self):
+	def roll_initiative(self):
 		self.atb = random.randint(0, self.speed)
 
 	def __get_stance_attrib(self, attrib):

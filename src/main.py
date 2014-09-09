@@ -43,7 +43,7 @@ class CombatState(DirectObject.DirectObject):
 
 		self.terrain = CombatTerrain()
 		self.player = CombatPlayer("Player")
-		self.player.roll_intiative()
+		self.player.roll_initiative()
 
 		self.enemies = []
 		self.active_set = []
@@ -64,13 +64,13 @@ class CombatState(DirectObject.DirectObject):
 		self.player = CombatPlayer("Player")
 		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
 		base.ui.execute_js("setStances(%s)" % stance_str, onload=True)
-		self.player.roll_intiative()
+		self.player.roll_initiative()
 
 		self.enemies = []
 		for i in range(3):
 			enemy = CombatPlayer.from_player_chassis("clay_golem")
 			enemy.grid_position = CombatTerrain.get_random_tile()
-			enemy.roll_intiative()
+			enemy.roll_initiative()
 			enemy.target = self.player
 			self.enemies.append(enemy)
 
