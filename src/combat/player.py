@@ -22,6 +22,25 @@ class Stance(object):
 		self.speed = 0
 
 
+def load_vector(name, vector_dict):
+	default = [1.0/6.0 for i in range(6)]
+
+	vector = [float(i) for i in vector_dict]
+	if len(vector) != 6:
+		print("Incorrectly sized vector for player chassis: %s" % name)
+		return default
+
+	norm = sum(vector)
+	if norm == 0:
+		print("Zero vector for player chassis: %s" % name)
+		return default
+
+	for i, value in enumerate(vector):
+		vector[i] = value / norm
+
+	return vector
+
+
 class Player(object):
 	@classmethod
 	def from_player_chassis(cls, name):
@@ -37,18 +56,9 @@ class Player(object):
 		player = Player(pretty_name)
 		player.model.setColor(0.961, 0.725, 0.012, 1.0)
 
-		stat_vector = [float(i) for i in data["stat_vector"]]
-		if len(stat_vector) != 6:
-			print("Incorrectly sized stat vector for player chassis: %s" % name)
-			return player
-
-		norm = sum(stat_vector)
-		if norm == 0:
-			print("Zero stat vector for player chassis: %s" % name)
-			return player
-
+		stat_vector = load_vector(name, data["stat_vector"])
 		for i, value in enumerate(stat_vector):
-			stat_vector[i] = value / norm * STAT_SCALE[i]
+			stat_vector[i] = value * STAT_SCALE[i]
 
 		player._movement = stat_vector[STAT_MOVEMENT]
 		player._range = stat_vector[STAT_RANGE]
@@ -56,6 +66,8 @@ class Player(object):
 		player._defense = stat_vector[STAT_DEFENSE]
 		player._regen = stat_vector[STAT_REGEN]
 		player._speed = stat_vector[STAT_SPEED]
+
+		player._credit_vector = load_vector(name, data["credit_vector"])
 
 		return player
 
@@ -89,6 +101,8 @@ class Player(object):
 		temp_stance.range = 5
 		self.stances = [temp_stance]
 		self.active_stance = None
+
+		self._credit_vector = [1.0/6.0 for i in range(6)]
 
 	def __del__(self):
 		self.model.removeNode()
