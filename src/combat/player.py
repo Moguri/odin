@@ -73,6 +73,18 @@ def load_vector(name, vector_dict):
 	return vector
 
 
+def load_stance(name, stance_dict):
+	stance = Stance()
+	stance.name = stance_dict.get("name", "Stance")
+	stance.cost_factor = stance_dict.get("cost_factor", 0.0)
+
+	default_vector = [1.0 for i in range(6)]
+	stance.benefit_vector = load_vector(name, stance_dict.get("benefits", default_vector))
+	stance.cost_vector = load_vector(name, stance_dict.get("costs", default_vector))
+
+	return stance
+
+
 class Player(object):
 	@classmethod
 	def from_player_chassis(cls, name):
@@ -106,6 +118,12 @@ class Player(object):
 			print("No credit_vector in player chassis: %s" % name)
 			return player
 		player._credit_vector = load_vector(name, data["credit_vector"])
+
+		stances = []
+		if "stances" in data:
+			for stance in data["stances"]:
+				stances.append(load_stance(name, stance))
+			player.stances = stances
 
 		return player
 
