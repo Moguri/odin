@@ -102,7 +102,7 @@ class CombatState(DirectObject.DirectObject):
 					self.player.action_set.remove("MOVE")
 					base.ui.execute_js("disableItem('MOVE')")
 				end_pos = self.player.model.getPos()
-				self.move_interval = self.player.model.posInterval(distance * 0.25, end_pos, start_pos)
+				self.move_interval = self.player.model.posInterval(distance * 0.125, end_pos, start_pos, blendType='easeInOut')
 				self.move_interval.start()
 				self.mode = "ANIMATION"
 		elif self.mode == "ATTACK":
@@ -216,7 +216,7 @@ class CombatState(DirectObject.DirectObject):
 					start_pos = current_player.model.getPos()
 					current_player.grid_position = closest
 					end_pos = current_player.model.getPos()
-					self.move_interval = current_player.model.posInterval(distance * 0.25, end_pos, start_pos)
+					self.move_interval = current_player.model.posInterval(distance * 0.125, end_pos, start_pos, blendType='easeInOut')
 					self.move_interval.start()
 				current_player.action_set.remove("MOVE")
 				self.mode = "ANIMATION"
