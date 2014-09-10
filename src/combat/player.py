@@ -14,12 +14,44 @@ STAT_SCALE = [10.0, 10.0, 2.0, 2.0, 0.0, 4.0]
 class Stance(object):
 	def __init__(self):
 		self.name = "Stance"
-		self.movement = 0
-		self.range = 0
-		self.damage = 0
-		self.defense = 0
-		self.regen = 0
-		self.speed = 0
+		self.level = 1
+		self.cost_factor = 0.0
+		self.benefit_vector = [0.0 for i in range(6)]
+		self.cost_vector = [0.0 for i in range(6)]
+
+	def _calculate_effect(self, stat_index):
+		cost_factor = self.level * self.cost_factor
+		benefit_factor = self.level + self.level * self.cost_factor
+		benefit = self.benefit_vector[stat_index]
+		cost = self.cost_vector[stat_index]
+
+		factor = benefit_factor * benefit - cost_factor * cost
+
+		return factor * STAT_SCALE[stat_index]
+
+	@property
+	def movement(self):
+		return self._calculate_effect(STAT_MOVEMENT)
+
+	@property
+	def range(self):
+		return self._calculate_effect(STAT_RANGE)
+
+	@property
+	def damage(self):
+		return self._calculate_effect(STAT_DAMAGE)
+
+	@property
+	def defense(self):
+		return self._calculate_effect(STAT_DEFENSE)
+
+	@property
+	def regen(self):
+		return self._calculate_effect(STAT_REGEN)
+
+	@property
+	def speed(self):
+		return self._calculate_effect(STAT_SPEED)
 
 
 def load_vector(name, vector_dict):
@@ -104,7 +136,7 @@ class Player(object):
 		self.grid_position = [16, 16, 0]
 
 		temp_stance = Stance()
-		temp_stance.range = 5
+		temp_stance.benefit_vector[STAT_RANGE] = 1
 		self.stances = [temp_stance]
 		self.active_stance = None
 
