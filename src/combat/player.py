@@ -167,7 +167,6 @@ class Player(object):
 			retval = 0
 
 		retval *= STAT_SCALE[stat_index]
-		print(self.name, attrib, retval)
 		return retval
 
 	def __get_stance_attribi(self, attrib):

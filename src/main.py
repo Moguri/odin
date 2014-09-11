@@ -142,7 +142,6 @@ class CombatState(DirectObject.DirectObject):
 			self.mode = "ATTACK" if self.mode != "ATTACK" else "NONE"
 
 	def end_turn(self):
-		print("clearing action set")
 		self.player.action_set = []
 		self.ui_selection = 0
 		self.mode = "NONE"
@@ -232,7 +231,6 @@ class CombatState(DirectObject.DirectObject):
 				current_player.action_set = []
 
 		if not current_player.action_set:
-			print("%s has finished their turn" % current_player.name)
 			current_player.atb -= 10
 			self.active_set.remove(current_player)
 
