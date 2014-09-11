@@ -95,14 +95,10 @@ class Player(object):
 
 	def __init__(self, name='', level=1):
 		self.level = level
-		self._movement = 3
 		self.remaining_movement = 0
-		self._range = 5
-		self._damage = 1
 		self.health = 1
-		self._defense = 0
-		self._regen = 0
-		self._speed = 2
+
+		self._stat_vector = [0.0 for i in range(6)]
 
 		self.load_player_chassis("default_player")
 
@@ -149,14 +145,7 @@ class Player(object):
 		if "stat_vector" not in data:
 			print("No stat_vector in player chassis: %s" % name)
 			return
-		stat_vector = load_vector(name, data["stat_vector"])
-
-		self._movement = stat_vector[STAT_MOVEMENT]
-		self._range = stat_vector[STAT_RANGE]
-		self._damage = stat_vector[STAT_DAMAGE]
-		self._defense = stat_vector[STAT_DEFENSE]
-		self._regen = stat_vector[STAT_REGEN]
-		self._speed = stat_vector[STAT_SPEED]
+		self._stat_vector = load_vector(name, data["stat_vector"])
 
 		if "credit_vector" not in data:
 			print("No credit_vector in player chassis: %s" % name)
@@ -172,7 +161,7 @@ class Player(object):
 	def __get_stance_attrib(self, attrib):
 		stat_index = eval("STAT_"+attrib.upper())
 
-		retval = self.level * getattr(self, "_" + attrib)
+		retval = self.level * self._stat_vector[stat_index]
 
 		if self.active_stance is not None:
 			retval += getattr(self.active_stance, attrib)
