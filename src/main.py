@@ -62,7 +62,7 @@ class CombatState(DirectObject.DirectObject):
 		self.mode = "NONE"
 
 		# Setup the combatants
-		self.player = CombatPlayer("Player")
+		self.player = CombatPlayer("Player", level=3)
 		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
 		base.ui.execute_js("setStances(%s)" % stance_str, onload=True)
 		self.player.roll_initiative()

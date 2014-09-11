@@ -87,13 +87,14 @@ def load_stance(name, stance_dict):
 
 class Player(object):
 	@classmethod
-	def from_player_chassis(cls, name):
-		player = Player()
+	def from_player_chassis(cls, name, level=1):
+		player = Player(level=level)
 		player.load_player_chassis(name)
 		player.model.setColor(0.961, 0.725, 0.012, 1.0)
 		return player
 
-	def __init__(self, name=''):
+	def __init__(self, name='', level=1):
+		self.level = level
 		self._movement = 3
 		self.remaining_movement = 0
 		self._range = 5
@@ -171,7 +172,7 @@ class Player(object):
 	def __get_stance_attrib(self, attrib):
 		stat_index = eval("STAT_"+attrib.upper())
 
-		retval = getattr(self, "_" + attrib)
+		retval = self.level * getattr(self, "_" + attrib)
 
 		if self.active_stance is not None:
 			retval += getattr(self.active_stance, attrib)
