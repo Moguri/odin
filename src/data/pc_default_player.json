@@ -22,7 +22,7 @@
 			{
 				"name" : "Range",
 				"cost_factor" : 0.0,
-				"benefits" : [1, 0, 0, 0, 0, 0],
+				"benefits" : [0, 1, 0, 0, 0, 0],
 				"costs" : [1, 1, 1, 1, 1, 1]
 			}
 		]
