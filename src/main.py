@@ -225,6 +225,9 @@ class CombatState(DirectObject.DirectObject):
 				if CombatTerrain.check_distance(current_player.range, center, target):
 					current_player.target.health -= current_player.damage
 				current_player.action_set.remove("ATTACK")
+			elif "STANCE" in current_player.action_set:
+				current_player.active_stance = current_player.stances[0] if current_player.stances else None
+				current_player.action_set.remove("STANCE")
 			else:
 				current_player.action_set = []
 
