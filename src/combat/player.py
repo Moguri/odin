@@ -88,43 +88,9 @@ def load_stance(name, stance_dict):
 class Player(object):
 	@classmethod
 	def from_player_chassis(cls, name):
-		path = "data/pc_%s.json" % name
-		with open(path) as fin:
-			data = json.load(fin)
-
-		if "name" in data:
-			pretty_name = data["name"]
-		else:
-			pretty_name = " ".join([i.title() for i in name.split("_")])
-
-		player = Player(pretty_name)
+		player = Player()
+		player.load_player_chassis(name)
 		player.model.setColor(0.961, 0.725, 0.012, 1.0)
-
-		if "stat_vector" not in data:
-			print("No stat_vector in player chassis: %s" % name)
-			return player
-		stat_vector = load_vector(name, data["stat_vector"])
-		for i, value in enumerate(stat_vector):
-			stat_vector[i] = value * STAT_SCALE[i]
-
-		player._movement = stat_vector[STAT_MOVEMENT]
-		player._range = stat_vector[STAT_RANGE]
-		player._damage = stat_vector[STAT_DAMAGE]
-		player._defense = stat_vector[STAT_DEFENSE]
-		player._regen = stat_vector[STAT_REGEN]
-		player._speed = stat_vector[STAT_SPEED]
-
-		if "credit_vector" not in data:
-			print("No credit_vector in player chassis: %s" % name)
-			return player
-		player._credit_vector = load_vector(name, data["credit_vector"])
-
-		stances = []
-		if "stances" in data:
-			for stance in data["stances"]:
-				stances.append(load_stance(name, stance))
-			player.stances = stances
-
 		return player
 
 	def __init__(self, name=''):
@@ -136,6 +102,8 @@ class Player(object):
 		self._defense = 0
 		self._regen = 0
 		self._speed = 2
+
+		self.load_player_chassis("default_player")
 
 		self.name = name
 
@@ -165,6 +133,42 @@ class Player(object):
 
 	def roll_initiative(self):
 		self.atb = random.randint(0, self.speed)
+
+	def load_player_chassis(self, name):
+		path = "data/pc_%s.json" % name
+		with open(path) as fin:
+			data = json.load(fin)
+
+		if "name" in data:
+			pretty_name = data["name"]
+		else:
+			pretty_name = " ".join([i.title() for i in name.split("_")])
+		self.name = pretty_name
+
+		if "stat_vector" not in data:
+			print("No stat_vector in player chassis: %s" % name)
+			return
+		stat_vector = load_vector(name, data["stat_vector"])
+		for i, value in enumerate(stat_vector):
+			stat_vector[i] = value * STAT_SCALE[i]
+
+		self._movement = stat_vector[STAT_MOVEMENT]
+		self._range = stat_vector[STAT_RANGE]
+		self._damage = stat_vector[STAT_DAMAGE]
+		self._defense = stat_vector[STAT_DEFENSE]
+		self._regen = stat_vector[STAT_REGEN]
+		self._speed = stat_vector[STAT_SPEED]
+
+		if "credit_vector" not in data:
+			print("No credit_vector in player chassis: %s" % name)
+			return
+		self._credit_vector = load_vector(name, data["credit_vector"])
+
+		stances = []
+		if "stances" in data:
+			for stance in data["stances"]:
+				stances.append(load_stance(name, stance))
+			self.stances = stances
 
 	def __get_stance_attrib(self, attrib):
 		retval = getattr(self, "_" + attrib)
