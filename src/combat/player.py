@@ -99,6 +99,8 @@ class Player(object):
 		self.health = 1
 
 		self._stat_vector = [0.0 for i in range(6)]
+		self.stances = []
+		self.active_stance = None
 
 		self.load_player_chassis("default_player")
 
@@ -117,11 +119,6 @@ class Player(object):
 		self.model.reparentTo(base.render)
 
 		self.grid_position = [16, 16, 0]
-
-		temp_stance = Stance()
-		temp_stance.benefit_vector[STAT_RANGE] = 1
-		self.stances = [temp_stance]
-		self.active_stance = None
 
 		self._credit_vector = [1.0/6.0 for i in range(6)]
 
