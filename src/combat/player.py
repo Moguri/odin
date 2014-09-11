@@ -27,7 +27,7 @@ class Stance(object):
 
 		factor = benefit_factor * benefit - cost_factor * cost
 
-		return factor * STAT_SCALE[stat_index]
+		return factor
 
 	@property
 	def movement(self):
@@ -149,8 +149,6 @@ class Player(object):
 			print("No stat_vector in player chassis: %s" % name)
 			return
 		stat_vector = load_vector(name, data["stat_vector"])
-		for i, value in enumerate(stat_vector):
-			stat_vector[i] = value * STAT_SCALE[i]
 
 		self._movement = stat_vector[STAT_MOVEMENT]
 		self._range = stat_vector[STAT_RANGE]
@@ -171,6 +169,8 @@ class Player(object):
 			self.stances = stances
 
 	def __get_stance_attrib(self, attrib):
+		stat_index = eval("STAT_"+attrib.upper())
+
 		retval = getattr(self, "_" + attrib)
 
 		if self.active_stance is not None:
@@ -178,6 +178,9 @@ class Player(object):
 
 		if retval < 0:
 			retval = 0
+
+		retval *= STAT_SCALE[stat_index]
+		print(self.name, attrib, retval)
 		return retval
 
 	def __get_stance_attribi(self, attrib):
