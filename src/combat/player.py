@@ -126,7 +126,7 @@ class Player(object):
 		self.model.removeNode()
 
 	def roll_initiative(self):
-		self.atb = random.randint(0, self.speed)
+		self.atb = random.random() * self.speed
 
 	def load_player_chassis(self, name):
 		path = "data/pc_%s.json" % name
@@ -194,7 +194,7 @@ class Player(object):
 
 	@property
 	def speed(self):
-		return self.__get_stance_attribi("speed")
+		return self.__get_stance_attrib("speed")
 
 	@property
 	def grid_position(self):
