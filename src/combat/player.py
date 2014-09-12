@@ -5,53 +5,8 @@ import json
 from panda3d.core import *
 
 from .terrain import Terrain
-
-
-STAT_MOVEMENT, STAT_RANGE, STAT_DAMAGE, STAT_DEFENSE, STAT_REGEN, STAT_SPEED = range(6)
-STAT_SCALE = [10.0, 10.0, 2.0, 2.0, 0.0, 4.0]
-
-
-class Stance(object):
-	def __init__(self):
-		self.name = "Stance"
-		self.level = 1
-		self.cost_factor = 0.0
-		self.benefit_vector = [0.0 for i in range(6)]
-		self.cost_vector = [0.0 for i in range(6)]
-
-	def _calculate_effect(self, stat_index):
-		cost_factor = self.level * self.cost_factor
-		benefit_factor = self.level + self.level * self.cost_factor
-		benefit = self.benefit_vector[stat_index]
-		cost = self.cost_vector[stat_index]
-
-		factor = benefit_factor * benefit - cost_factor * cost
-
-		return factor
-
-	@property
-	def movement(self):
-		return self._calculate_effect(STAT_MOVEMENT)
-
-	@property
-	def range(self):
-		return self._calculate_effect(STAT_RANGE)
-
-	@property
-	def damage(self):
-		return self._calculate_effect(STAT_DAMAGE)
-
-	@property
-	def defense(self):
-		return self._calculate_effect(STAT_DEFENSE)
-
-	@property
-	def regen(self):
-		return self._calculate_effect(STAT_REGEN)
-
-	@property
-	def speed(self):
-		return self._calculate_effect(STAT_SPEED)
+from stance_generator import StanceGenerator, Stance
+from stats import *
 
 
 def load_vector(name, vector_dict):
@@ -103,6 +58,7 @@ class Player(object):
 		self.active_stance = None
 
 		self.load_player_chassis("default_player")
+		self.stances = StanceGenerator.n_random(3)
 
 		self.name = name
 

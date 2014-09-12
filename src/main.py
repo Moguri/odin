@@ -15,6 +15,7 @@ from panda3d.core import *
 
 from combat.terrain import Terrain as CombatTerrain, MAP_SIZE
 from combat.player import Player as CombatPlayer
+from stance_generator import StanceGenerator
 
 
 loadPrcFileData("", "textures-power-2 none")
@@ -63,6 +64,8 @@ class CombatState(DirectObject.DirectObject):
 
 		# Setup the combatants
 		self.player = CombatPlayer("Player", level=3)
+		for stance in self.player.stances:
+			print(stance)
 		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
 		base.ui.execute_js("setStances(%s)" % stance_str, onload=True)
 		self.player.roll_initiative()
@@ -184,6 +187,9 @@ class CombatState(DirectObject.DirectObject):
 				self.active_set.remove(dead_enemy)
 		self.enemies = [e for e in self.enemies if e.health > 0]
 		if not self.enemies or self.player.health <= 0:
+			new_pool = StanceGenerator.n_from_pool(5, self.player.stances)
+			for stance in new_pool:
+				print(stance)
 			base.change_state(LobbyState)
 			return
 
