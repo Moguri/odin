@@ -190,7 +190,7 @@ class CombatState(DirectObject.DirectObject):
 			new_pool = StanceGenerator.n_from_pool(5, self.player.stances)
 			for stance in new_pool:
 				print(stance)
-			base.change_state(LobbyState)
+			base.change_state(EndCombatState)
 			return
 
 		# Get current participants
@@ -332,6 +332,40 @@ class LobbyState(DirectObject.DirectObject):
 				base.ui.execute_js("setActiveTab(%d)" % self.ui_selection)
 			self.ui_last = self.ui_selection
 
+
+class EndCombatState(DirectObject.DirectObject):
+	def __init__(self):
+		self.accept("arrow_up", self.sel_up)
+		self.accept("arrow_left", self.sel_up)
+		self.accept("arrow_down", self.sel_down)
+		self.accept("arrow_right", self.sel_down)
+		self.accept("arrow_up-repeat", self.sel_up)
+		self.accept("arrow_left-repeat", self.sel_up)
+		self.accept("arrow_down-repeat", self.sel_down)
+		self.accept("arrow_right-repeat", self.sel_down)
+		self.accept("enter", self.accept_selection)
+		self.accept("escape", self.escape)
+
+		base.ui.load('end_combat_ui.html')
+		self.ui_last = self.ui_selection = 0
+
+	def destroy(self):
+		self.ignoreAll()
+
+	def accept_selection(self):
+		base.change_state(LobbyState)
+
+	def escape(self):
+		pass
+
+	def sel_up(self):
+		self.ui_selection -= 1
+
+	def sel_down(self):
+		self.ui_selection += 1
+
+	def main_loop(self):
+		pass
 
 class Game(ShowBase):
 	def __init__(self):
