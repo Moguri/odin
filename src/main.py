@@ -66,7 +66,7 @@ class GameState(object, DirectObject.DirectObject):
 
 class CombatState(GameState):
 	def __init__(self, _base):
-		super(CombatState, self).__init__(_base, 'ui')
+		super(CombatState, self).__init__(_base, 'combat_ui')
 		self.accept("1", self.enter_move_mode)
 		self.accept("2", self.enter_attack_mode)
 		self.accept("3", self.end_turn)
