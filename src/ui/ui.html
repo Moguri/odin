@@ -27,71 +27,67 @@
     </style>
 </head>
 <body>
-    <!--<div class="well page-header">-->
-        <!--<span>Some helpful information?</span>-->
-    <!--</div>-->
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar fadeInRight">
-                <div class="tab-content">
-                    <div class="tab-pane fade in active" id="actions">
-                        <div  class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Actions</h3>
-                            </div>
-                            <ul class="panel-body list-group">
-                                <li id="STANCE" class="list-group-item">Stance</li>
-                                <li id="MOVE" class="list-group-item">Move</li>
-                                <li id="ATTACK" class="list-group-item">Attack</li>
-                                <li class="list-group-item">End Turn</li>
-                            </ul>
-                        </div>
+<div class="container-fluid">
+    <div class="col-sm-3 col-md-2 fadeInRight">
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="actions">
+                <div  class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Actions</h3>
                     </div>
-                    <div class="tab-pane fade in active" id="stances">
-                        <div  class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Stances</h3>
-                            </div>
-                            <ul id="stance-list" class="panel-body list-group">
-                            </ul>
-                        </div>
+                    <ul class="panel-body list-group">
+                        <li id="STANCE" class="list-group-item">Stance</li>
+                        <li id="MOVE" class="list-group-item">Move</li>
+                        <li id="ATTACK" class="list-group-item">Attack</li>
+                        <li class="list-group-item">End Turn</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tab-pane fade in active" id="stances">
+                <div  class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Stances</h3>
                     </div>
+                    <ul id="stance-list" class="panel-body list-group">
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script>
-        function setStances(stances) {
-            stances.forEach(function (i) {
-                $("#stance-list").append("<li class='list-group-item'>" + i + "</li>");
-            });
-        }
-
-        function setActiveSelection(idx) {
-            $("#actions li").removeClass("active");
-            $("#actions li").eq(idx).addClass("active");
-            $("#stances li").removeClass("active");
-            $("#stances li").eq(idx).addClass("active");
-        }
-
-        function switchToMenu(menu) {
-            $(".tab-content .tab-pane").hide();
-            $(".tab-content #" + menu).show();
-        }
-
-        function enableItem(item) {
-            $("#" + item).removeClass("disabled");
-        }
-
-        function disableItem(item) {
-            $("#" + item).addClass("disabled");
-        }
-
-        $(document).ready(function() {
-            switchToMenu("actions");
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script>
+    function setStances(stances) {
+        stances.forEach(function (i) {
+            $("#stance-list").append("<li class='list-group-item'>" + i + "</li>");
         });
-    </script>
+    }
+
+    function setActiveSelection(idx) {
+        $("#actions li").removeClass("active");
+        $("#actions li").eq(idx).addClass("active");
+        $("#stances li").removeClass("active");
+        $("#stances li").eq(idx).addClass("active");
+    }
+
+    function switchToMenu(menu) {
+        $(".tab-content .tab-pane").hide();
+        $(".tab-content #" + menu).show();
+    }
+
+    function enableItem(item) {
+        $("#" + item).removeClass("disabled");
+    }
+
+    function disableItem(item) {
+        $("#" + item).addClass("disabled");
+    }
+
+    $(document).ready(function() {
+        switchToMenu("actions");
+    });
+</script>
 </body>
 </html>
