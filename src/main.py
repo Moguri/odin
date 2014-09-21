@@ -71,10 +71,6 @@ class CombatState(GameState):
 		self.accept("2", self.enter_attack_mode)
 		self.accept("3", self.end_turn)
 
-		def stm():
-			self.base.ui.execute_js("switchToMenu('stances')")
-		self.accept("space", stm)
-
 		self.terrain = CombatTerrain()
 		self.player = CombatPlayer("Player")
 		self.player.roll_initiative()
