@@ -22,7 +22,10 @@ loadPrcFileData("", "textures-power-2 none")
 
 
 class GameState(object, DirectObject.DirectObject):
-	def __init__(self, ui=None):
+	def __init__(self, _base, ui=None):
+		DirectObject.DirectObject.__init__(self)
+		self.base = _base
+
 		self.accept("arrow_up", self.sel_up)
 		self.accept("arrow_left", self.sel_left)
 		self.accept("arrow_down", self.sel_down)
@@ -35,7 +38,7 @@ class GameState(object, DirectObject.DirectObject):
 		self.accept("escape", self.escape)
 
 		if ui is not None:
-			base.ui.load(ui+'.html')
+			self.base.ui.load(ui+'.html')
 
 		self.ui_last = self.ui_selection = 0
 
@@ -65,14 +68,14 @@ class GameState(object, DirectObject.DirectObject):
 
 
 class CombatState(GameState):
-	def __init__(self):
-		super(CombatState, self).__init__('ui')
+	def __init__(self, _base):
+		super(CombatState, self).__init__(_base, 'ui')
 		self.accept("1", self.enter_move_mode)
 		self.accept("2", self.enter_attack_mode)
 		self.accept("3", self.end_turn)
 
 		def stm():
-			base.ui.execute_js("switchToMenu('stances')")
+			self.base.ui.execute_js("switchToMenu('stances')")
 		self.accept("space", stm)
 
 		self.terrain = CombatTerrain()
@@ -82,12 +85,12 @@ class CombatState(GameState):
 		self.enemies = []
 		self.active_set = []
 
-		base.disableMouse()
-		base.camera.setPos(25, -25, 28)
-		base.camera.setHpr(45, -45, 0)
-		base.camLens.setFov(65)
+		self.base.disableMouse()
+		self.base.camera.setPos(25, -25, 28)
+		self.base.camera.setHpr(45, -45, 0)
+		self.base.camLens.setFov(65)
 
-		base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection, True)
+		self.base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection, True)
 
 		self.selected_pos = [16, 16, 0]
 
@@ -98,7 +101,7 @@ class CombatState(GameState):
 		for stance in self.player.stances:
 			print(stance)
 		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
-		base.ui.execute_js("setStances(%s)" % stance_str, onload=True)
+		self.base.ui.execute_js("setStances(%s)" % stance_str, onload=True)
 		self.player.roll_initiative()
 
 		self.enemies = []
@@ -114,13 +117,13 @@ class CombatState(GameState):
 
 	def destroy(self):
 		super(CombatState, self).destroy()
-		for n in base.render.getChildren():
+		for n in self.base.render.getChildren():
 			n.removeNode()
 
 	def escape(self):
 		if self.mode == "STANCE":
 			self.ui_selection = 0
-			base.ui.execute_js("switchToMenu('actions')")
+			self.base.ui.execute_js("switchToMenu('actions')")
 		self.mode = "NONE"
 
 	def accept_selection(self):
@@ -134,7 +137,7 @@ class CombatState(GameState):
 				self.player.remaining_movement -= distance
 				if self.player.remaining_movement <= 0:
 					self.player.action_set.remove("MOVE")
-					base.ui.execute_js("disableItem('MOVE')")
+					self.base.ui.execute_js("disableItem('MOVE')")
 				end_pos = self.player.model.getPos()
 				self.move_interval = self.player.model.posInterval(distance * 0.125, end_pos, start_pos, blendType='easeInOut')
 				self.move_interval.start()
@@ -145,12 +148,12 @@ class CombatState(GameState):
 					if enemy.grid_position == self.selected_pos:
 						enemy.health -= self.player.damage
 						self.player.action_set.remove("ATTACK")
-						base.ui.execute_js("disableItem('ATTACK')")
+						self.base.ui.execute_js("disableItem('ATTACK')")
 						self.mode = "NONE"
 		elif self.mode == "STANCE":
 			self.player.active_stance = self.player.stances[self.ui_selection]
 			self.player.action_set.remove("STANCE")
-			base.ui.execute_js("disableItem('STANCE')")
+			self.base.ui.execute_js("disableItem('STANCE')")
 			self.escape()
 		else:
 			if self.ui_selection == 0:
@@ -165,7 +168,7 @@ class CombatState(GameState):
 	def enter_stance_mode(self):
 		if "STANCE" in self.player.action_set:
 			self.mode = "STANCE"
-			base.ui.execute_js("switchToMenu('stances')")
+			self.base.ui.execute_js("switchToMenu('stances')")
 
 	def enter_move_mode(self):
 		if "MOVE" in self.player.action_set:
@@ -221,7 +224,7 @@ class CombatState(GameState):
 			new_pool = StanceGenerator.n_from_pool(5, self.player.stances)
 			for stance in new_pool:
 				print(stance)
-			base.change_state(EndCombatState)
+			self.base.change_state(EndCombatState)
 			return
 
 		# Get current participants
@@ -238,7 +241,7 @@ class CombatState(GameState):
 				participant.action_set = ["ATTACK", "MOVE", "STANCE"]
 				participant.remaining_movement = participant.movement
 				for i in participant.action_set:
-					base.ui.execute_js("enableItem('%s')" % i)
+					self.base.ui.execute_js("enableItem('%s')" % i)
 
 		current_player = self.active_set[0]
 		if current_player != self.player and current_player.target:
@@ -293,13 +296,13 @@ class CombatState(GameState):
 			self.ui_selection = ui_max
 
 		if self.ui_last != self.ui_selection:
-			base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
+			self.base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
 			self.ui_last = self.ui_selection
 
 
 class LobbyState(GameState):
-	def __init__(self):
-		super(LobbyState, self).__init__('lobby_ui')
+	def __init__(self, _base):
+		super(LobbyState, self).__init__(_base, 'lobby_ui')
 
 		self.ui_options = [
 			"STUDENT_INFO",
@@ -308,7 +311,7 @@ class LobbyState(GameState):
 			"QUIT",
 		]
 		self.mode = None
-		base.ui.execute_js("setActiveTab(%d)" % self.ui_selection, True)
+		self.base.ui.execute_js("setActiveTab(%d)" % self.ui_selection, True)
 
 	def accept_selection(self):
 		if self.mode is None:
@@ -318,7 +321,7 @@ class LobbyState(GameState):
 			if self.mode == "STUDENT_INFO":
 				pass
 			elif self.mode == "COURSEWORK":
-				base.change_state(CombatState)
+				self.base.change_state(CombatState)
 			elif self.mode == "OPTIONS":
 				pass
 			elif self.mode == "QUIT":
@@ -339,16 +342,16 @@ class LobbyState(GameState):
 
 		if self.ui_last != self.ui_selection:
 			if self.mode is None:
-				base.ui.execute_js("setActiveTab(%d)" % self.ui_selection)
+				self.base.ui.execute_js("setActiveTab(%d)" % self.ui_selection)
 			self.ui_last = self.ui_selection
 
 
 class EndCombatState(GameState):
-	def __init__(self):
-		super(EndCombatState, self).__init__('end_combat_ui')
+	def __init__(self, _base):
+		super(EndCombatState, self).__init__(_base, 'end_combat_ui')
 
 	def accept_selection(self):
-		base.change_state(LobbyState)
+		self.base.change_state(LobbyState)
 
 
 class Game(ShowBase):
@@ -360,13 +363,13 @@ class Game(ShowBase):
 
 		self.ui = CEFPanda()
 
-		self.state = LobbyState()
+		self.state = LobbyState(self)
 
 		self.taskMgr.add(self.main_loop, "MainLoop")
 
 	def change_state(self, new_state):
 		self.state.destroy()
-		self.state = new_state()
+		self.state = new_state(self)
 
 	def main_loop(self, task):
 		self.state.main_loop()
