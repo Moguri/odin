@@ -18,9 +18,6 @@ from combat.player import Player as CombatPlayer
 from stance_generator import StanceGenerator
 
 
-loadPrcFileData("", "textures-power-2 none")
-
-
 class GameState(object, DirectObject.DirectObject):
 	def __init__(self, _base, ui=None):
 		DirectObject.DirectObject.__init__(self)
