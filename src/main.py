@@ -21,8 +21,8 @@ from stance_generator import StanceGenerator
 loadPrcFileData("", "textures-power-2 none")
 
 
-class CombatState(DirectObject.DirectObject):
-	def __init__(self):
+class GameState(object, DirectObject.DirectObject):
+	def __init__(self, ui=None):
 		self.accept("arrow_up", self.sel_up)
 		self.accept("arrow_left", self.sel_left)
 		self.accept("arrow_down", self.sel_down)
@@ -33,11 +33,43 @@ class CombatState(DirectObject.DirectObject):
 		self.accept("arrow_right-repeat", self.sel_right)
 		self.accept("enter", self.accept_selection)
 		self.accept("escape", self.escape)
+
+		if ui is not None:
+			base.ui.load(ui+'.html')
+
+		self.ui_last = self.ui_selection = 0
+
+	def destroy(self):
+		self.ignoreAll()
+
+	def accept_selection(self):
+		pass
+
+	def escape(self):
+		pass
+
+	def sel_up(self):
+		self.ui_selection -= 1
+
+	def sel_down(self):
+		self.ui_selection += 1
+
+	def sel_left(self):
+		self.sel_up()
+
+	def sel_right(self):
+		self.sel_down()
+
+	def main_loop(self):
+		pass
+
+
+class CombatState(GameState):
+	def __init__(self):
+		super(CombatState, self).__init__('ui')
 		self.accept("1", self.enter_move_mode)
 		self.accept("2", self.enter_attack_mode)
 		self.accept("3", self.end_turn)
-
-		base.ui.load('ui.html')
 
 		def stm():
 			base.ui.execute_js("switchToMenu('stances')")
@@ -55,7 +87,6 @@ class CombatState(DirectObject.DirectObject):
 		base.camera.setHpr(45, -45, 0)
 		base.camLens.setFov(65)
 
-		self.ui_last = self.ui_selection = 0
 		base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection, True)
 
 		self.selected_pos = [16, 16, 0]
@@ -82,7 +113,7 @@ class CombatState(DirectObject.DirectObject):
 		self.move_interval = None
 
 	def destroy(self):
-		self.ignoreAll()
+		super(CombatState, self).destroy()
 		for n in base.render.getChildren():
 			n.removeNode()
 
@@ -266,22 +297,10 @@ class CombatState(DirectObject.DirectObject):
 			self.ui_last = self.ui_selection
 
 
-class LobbyState(DirectObject.DirectObject):
+class LobbyState(GameState):
 	def __init__(self):
-		self.accept("arrow_up", self.sel_up)
-		self.accept("arrow_left", self.sel_up)
-		self.accept("arrow_down", self.sel_down)
-		self.accept("arrow_right", self.sel_down)
-		self.accept("arrow_up-repeat", self.sel_up)
-		self.accept("arrow_left-repeat", self.sel_up)
-		self.accept("arrow_down-repeat", self.sel_down)
-		self.accept("arrow_right-repeat", self.sel_down)
-		self.accept("enter", self.accept_selection)
-		self.accept("escape", self.escape)
+		super(LobbyState, self).__init__('lobby_ui')
 
-		base.ui.load('lobby_ui.html')
-
-		self.ui_last = self.ui_selection = 0
 		self.ui_options = [
 			"STUDENT_INFO",
 			"COURSEWORK",
@@ -290,9 +309,6 @@ class LobbyState(DirectObject.DirectObject):
 		]
 		self.mode = None
 		base.ui.execute_js("setActiveTab(%d)" % self.ui_selection, True)
-
-	def destroy(self):
-		self.ignoreAll()
 
 	def accept_selection(self):
 		if self.mode is None:
@@ -313,12 +329,6 @@ class LobbyState(DirectObject.DirectObject):
 			self.ui_selection = self.ui_options.index(self.mode)
 			self.mode = None
 
-	def sel_up(self):
-		self.ui_selection -= 1
-
-	def sel_down(self):
-		self.ui_selection += 1
-
 	def main_loop(self):
 
 		ui_max = 3
@@ -333,39 +343,13 @@ class LobbyState(DirectObject.DirectObject):
 			self.ui_last = self.ui_selection
 
 
-class EndCombatState(DirectObject.DirectObject):
+class EndCombatState(GameState):
 	def __init__(self):
-		self.accept("arrow_up", self.sel_up)
-		self.accept("arrow_left", self.sel_up)
-		self.accept("arrow_down", self.sel_down)
-		self.accept("arrow_right", self.sel_down)
-		self.accept("arrow_up-repeat", self.sel_up)
-		self.accept("arrow_left-repeat", self.sel_up)
-		self.accept("arrow_down-repeat", self.sel_down)
-		self.accept("arrow_right-repeat", self.sel_down)
-		self.accept("enter", self.accept_selection)
-		self.accept("escape", self.escape)
-
-		base.ui.load('end_combat_ui.html')
-		self.ui_last = self.ui_selection = 0
-
-	def destroy(self):
-		self.ignoreAll()
+		super(EndCombatState, self).__init__('end_combat_ui')
 
 	def accept_selection(self):
 		base.change_state(LobbyState)
 
-	def escape(self):
-		pass
-
-	def sel_up(self):
-		self.ui_selection -= 1
-
-	def sel_down(self):
-		self.ui_selection += 1
-
-	def main_loop(self):
-		pass
 
 class Game(ShowBase):
 	def __init__(self):
