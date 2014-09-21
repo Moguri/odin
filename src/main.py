@@ -5,7 +5,7 @@ import os
 os.environ['PANDA_PRC_DIR'] = os.path.join(os.path.dirname(__file__), 'etc')
 
 # This import should be kept near the top to avoid issues with CEF/Chromium hooking malloc
-from cefexample import CEFPanda
+from cefpanda import CEFPanda
 
 
 from direct.showbase.ShowBase import ShowBase, DirectObject
