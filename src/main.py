@@ -38,7 +38,7 @@ class GameState(object, DirectObject.DirectObject):
 		self.accept("escape", self.escape)
 
 		if ui is not None:
-			self.base.ui.load(ui+'.html')
+			self.base.ui.load('ui/' + ui + '.html')
 
 		self.ui_last = self.ui_selection = 0
 
