@@ -343,6 +343,17 @@ class EndCombatState(GameState):
 	def __init__(self, _base):
 		super(EndCombatState, self).__init__(_base, 'end_combat_ui')
 
+		# Send the player's current spells to the UI
+		#TODO: Replace this with the actual player
+		self.player = CombatPlayer()
+		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
+		self.base.ui.execute_js("setupSpells('curr_spells', %s)" % stance_str, onload=True)
+
+		# Generate some new spells
+		self.new_stances = StanceGenerator.n_random(4)
+		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.new_stances]) + "]"
+		self.base.ui.execute_js("setupSpells('gen_spells', %s)" % stance_str, onload=True)
+
 	def accept_selection(self):
 		self.base.change_state(LobbyState)
 

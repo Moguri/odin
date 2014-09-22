@@ -10,11 +10,31 @@
 </head>
 <body>
 <div class="container-fluid">
+
+    <div id="info" class="well">
+        <p>Combat over; choose spells to swap (for now, press enter to return to the lobby)</p>
+    </div>
+
     <div id="content">
         <div class="well">
-            <h1>Combat over, press enter to return to the lobby</h1>
+            <h1>Generated Spells</h1>
+            <ul id="gen_spells" class="nav nav-pills nav-justified">
+            </ul>
+
+            <h1>Current Spells</h1>
+            <ul id="curr_spells" class="nav nav-pills nav-justified">
+            </ul>
         </div>
     </div>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script>
+    function setupSpells(list_id, spell_list) {
+        $.each(spell_list, function(i, v) {
+            $('#' + list_id).append('<li>' + v + '</li>');
+        });
+    }
+</script>
 </body>
 </html>
