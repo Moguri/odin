@@ -7,6 +7,23 @@
 
     <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="style.css" rel="stylesheet">
+
+    <style>
+        .panel {
+            width: 95%;
+            margin: auto;
+        }
+
+        .panel-body {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .panel canvas {
+            width: 100%;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
 <div class="container-fluid">
@@ -29,10 +46,45 @@
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="Chart.min.js"></script>
 <script>
+   //Chart.defaults.global.responsive = true;
+
+    var stance_template =
+    '<li>' +
+    '   <div class="panel panel-default">' +
+    '       <div class="panel-heading">%NAME%</div>' +
+    '       <div class="panel-body">' +
+    '          <canvas id="%CANVASID%"></canvas>' +
+    '       </div>' +
+    '   </div>' +
+    '</li>';
+
     function setupSpells(list_id, spell_list) {
         $.each(spell_list, function(i, v) {
-            $('#' + list_id).append('<li>' + v.name + '</li>');
+            canvas_id = list_id+i;
+            html = stance_template.replace(/%NAME%/, v.name)
+                                  .replace(/%CANVASID%/, canvas_id);
+            $('#' + list_id).append(html);
+
+            canvas = $('#' + canvas_id).get(0);
+
+            chart_data = {
+                labels: ["MOVEMENT", "RANGE", "DAMAGE", "DEFENSE", "REGEN", "SPEED"],
+                datasets: [
+                    {
+                        fillColor: "rgba(0, 256, 0, 0.5)",
+                        strokeColor: "rgba(0, 256, 0, 0.8)",
+                        data: v.benefit_vector
+                    },
+                    {
+                        fillColor: "rgba(256, 0, 0, 0.5)",
+                        strokeColor: "rgba(256, 0, 0, 0.8)",
+                        data: v.cost_vector
+                    }
+                ]
+            };
+            radar = new Chart(canvas.getContext("2d")).Radar(chart_data, {pointDot: false});
         });
     }
 </script>
