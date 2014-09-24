@@ -15,7 +15,9 @@ from panda3d.core import *
 
 from combat.terrain import Terrain as CombatTerrain, MAP_SIZE
 from combat.player import Player as CombatPlayer
-from stance_generator import StanceGenerator
+from stance_generator import StanceGenerator, Stance
+
+import json
 
 
 class GameState(object, DirectObject.DirectObject):
@@ -339,6 +341,22 @@ class LobbyState(GameState):
 			self.ui_last = self.ui_selection
 
 
+#TODO: Move this
+def stances_to_json(stance_list):
+	class StanceEncoder(json.JSONEncoder):
+		STANCE_ATTRIBS = [
+			"name",
+			"benefit_vector",
+			"cost_vector",
+		]
+
+		def default(self, obj):
+			if isinstance(obj, Stance):
+				return {i: getattr(obj, i) for i in self.STANCE_ATTRIBS}
+			return json.JSONEncoder.default(self, obj)
+
+	return StanceEncoder().encode(stance_list)
+
 class EndCombatState(GameState):
 	def __init__(self, _base):
 		super(EndCombatState, self).__init__(_base, 'end_combat_ui')
@@ -346,12 +364,12 @@ class EndCombatState(GameState):
 		# Send the player's current spells to the UI
 		#TODO: Replace this with the actual player
 		self.player = CombatPlayer()
-		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
+		stance_str = stances_to_json(self.player.stances)
 		self.base.ui.execute_js("setupSpells('curr_spells', %s)" % stance_str, onload=True)
 
 		# Generate some new spells
 		self.new_stances = StanceGenerator.n_random(4)
-		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.new_stances]) + "]"
+		stance_str = stances_to_json(self.new_stances)
 		self.base.ui.execute_js("setupSpells('gen_spells', %s)" % stance_str, onload=True)
 
 	def accept_selection(self):

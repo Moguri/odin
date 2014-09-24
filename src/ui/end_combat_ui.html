@@ -32,7 +32,7 @@
 <script>
     function setupSpells(list_id, spell_list) {
         $.each(spell_list, function(i, v) {
-            $('#' + list_id).append('<li>' + v + '</li>');
+            $('#' + list_id).append('<li>' + v.name + '</li>');
         });
     }
 </script>
