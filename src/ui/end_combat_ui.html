@@ -64,6 +64,8 @@
     '</li>';
 
     function setupSpells(list_id, spell_list) {
+        $('#' + list_id).empty();
+
         $.each(spell_list, function(i, v) {
             canvas_id = "c" + list_id + i;
             div_id = "d" + list_id + i;

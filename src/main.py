@@ -364,23 +364,35 @@ class EndCombatState(GameState):
 		# Send the player's current spells to the UI
 		#TODO: Replace this with the actual player
 		self.player = CombatPlayer()
-		stance_str = stances_to_json(self.player.stances)
-		self.base.ui.execute_js("setupSpells('curr_spells', %s)" % stance_str, onload=True)
-		self.base.ui.execute_js("activeSpell('curr_spells', 0)", onload=True)
 
 		# Generate some new spells
 		self.new_stances = StanceGenerator.n_random(4)
-		stance_str = stances_to_json(self.new_stances)
-		self.base.ui.execute_js("setupSpells('gen_spells', %s)" % stance_str, onload=True)
+
+		self.refresh_spell_ui()
+		self.base.ui.execute_js("activeSpell('curr_spells', 0)", onload=True)
 		self.base.ui.execute_js("activeSpell('gen_spells', 0)", onload=True)
 
 		self.spell_list = 'curr_spells'
 		self.last_selection = 0
 
+	def refresh_spell_ui(self):
+		stance_str = stances_to_json(self.player.stances)
+		self.base.ui.execute_js("setupSpells('curr_spells', %s)" % stance_str, onload=True)
+
+		stance_str = stances_to_json(self.new_stances)
+		self.base.ui.execute_js("setupSpells('gen_spells', %s)" % stance_str, onload=True)
+
 	def accept_selection(self):
 		if self.spell_list == 'curr_spells':
 			self.spell_list = 'gen_spells'
 		else:
+			newstance = self.new_stances.pop(self.ui_selection)
+			oldstance = self.player.stances.pop(self.last_selection)
+
+			self.new_stances.insert(self.ui_selection, oldstance)
+			self.player.stances.insert(self.last_selection, newstance)
+
+			self.refresh_spell_ui()
 			self.spell_list = 'curr_spells'
 		self.last_selection, self.ui_selection = self.ui_selection, self.last_selection
 
