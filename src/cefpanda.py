@@ -75,6 +75,7 @@ class CEFPanda(object):
 		)
 		self.browser.SetClientHandler(CefClientHandler(self.browser, self._cef_texture))
 
+		self._is_loaded = False
 		self._js_onload_queue = []
 		self.browser.SetClientCallback("OnLoadEnd", self._load_end)
 
@@ -94,13 +95,15 @@ class CEFPanda(object):
 			self.execute_js(i)
 
 		self._js_onload_queue = []
+		self._is_loaded = True
 
 	def load(self, url):
 		url = os.path.abspath(url if sys.platform == "win32" else "file://" + url)
+		self._is_loaded = False
 		self.browser.GetMainFrame().LoadUrl(url)
 
 	def execute_js(self, js, onload=False):
-		if onload:
+		if onload and not self._is_loaded:
 			self._js_onload_queue.append(js)
 		else:
 			self.browser.GetMainFrame().ExecuteJavascript(js)
