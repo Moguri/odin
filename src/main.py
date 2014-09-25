@@ -366,14 +366,44 @@ class EndCombatState(GameState):
 		self.player = CombatPlayer()
 		stance_str = stances_to_json(self.player.stances)
 		self.base.ui.execute_js("setupSpells('curr_spells', %s)" % stance_str, onload=True)
+		self.base.ui.execute_js("activeSpell('curr_spells', 0)", onload=True)
 
 		# Generate some new spells
 		self.new_stances = StanceGenerator.n_random(4)
 		stance_str = stances_to_json(self.new_stances)
 		self.base.ui.execute_js("setupSpells('gen_spells', %s)" % stance_str, onload=True)
+		self.base.ui.execute_js("activeSpell('gen_spells', 0)", onload=True)
+
+		self.spell_list = 'curr_spells'
+		self.last_selection = 0
 
 	def accept_selection(self):
-		self.base.change_state(LobbyState)
+		if self.spell_list == 'curr_spells':
+			self.spell_list = 'gen_spells'
+		else:
+			self.spell_list = 'curr_spells'
+		self.last_selection, self.ui_selection = self.ui_selection, self.last_selection
+
+	def escape(self):
+		if self.spell_list == 'gen_spells':
+			self.spell_list = 'curr_spells'
+			self.last_selection, self.ui_selection = self.ui_selection, self.last_selection
+		else:
+			self.base.change_state(LobbyState)
+
+	def main_loop(self):
+		if self.spell_list == 'curr_spells':
+			ui_max = len(self.player.stances) - 1
+		else:
+			ui_max = len(self.new_stances) - 1
+		if self.ui_selection > ui_max:
+			self.ui_selection = 0
+		elif self.ui_selection < 0:
+			self.ui_selection = ui_max
+
+		if self.ui_last != self.ui_selection:
+			self.base.ui.execute_js("activeSpell('%s', %d)" % (self.spell_list, self.ui_selection))
+			self.ui_last = self.ui_selection
 
 
 class Game(ShowBase):

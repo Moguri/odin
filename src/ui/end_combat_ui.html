@@ -41,7 +41,7 @@
 
     <div id="info" class="well well-sm">
         <span class="glyphicon glyphicon-info-sign"></span>
-        <span>Combat over; choose spells to swap (for now, press enter to return to the lobby)</span>
+        <span>Choose spells to swap. Press escape to go to the lobby screen.</span>
     </div>
 </div>
 
@@ -52,7 +52,7 @@
 
     var stance_template =
     '<li>' +
-    '   <div class="panel panel-default">' +
+    '   <div id="%DIVID%"class="panel panel-default">' +
     '       <div class="panel-heading">%NAME%</div>' +
     '       <div class="panel-body">' +
     '          <canvas id="%CANVASID%"></canvas>' +
@@ -62,8 +62,10 @@
 
     function setupSpells(list_id, spell_list) {
         $.each(spell_list, function(i, v) {
-            canvas_id = list_id+i;
+            canvas_id = "c" + list_id + i;
+            div_id = "d" + list_id + i;
             html = stance_template.replace(/%NAME%/, v.name)
+                                  .replace(/%DIVID%/, div_id)
                                   .replace(/%CANVASID%/, canvas_id);
             $('#' + list_id).append(html);
 
@@ -86,6 +88,13 @@
             };
             radar = new Chart(canvas.getContext("2d")).Radar(chart_data, {pointDot: false});
         });
+    }
+
+    function activeSpell(list_id, spell_id) {
+        $("#" + list_id + " li .panel").removeClass("panel-primary");
+        $("#" + list_id + " li .panel").removeClass("panel-default");
+        $("#" + list_id + " li .panel").addClass("panel-default");
+        $("#d" + list_id + spell_id).addClass("panel-primary");
     }
 </script>
 </body>
