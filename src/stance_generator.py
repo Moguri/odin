@@ -2,6 +2,7 @@
 import bisect
 import itertools
 import random
+import json
 
 
 from stats import *
@@ -28,6 +29,22 @@ def weighted_sample(choices, weights, n):
 		c = weighted_choice(choices, weights)
 		sample.add(c)
 	return list(sample)
+
+
+def stances_to_json(stance_list):
+	class StanceEncoder(json.JSONEncoder):
+		STANCE_ATTRIBS = [
+			"name",
+			"benefit_vector",
+			"cost_vector",
+		]
+
+		def default(self, obj):
+			if isinstance(obj, Stance):
+				return {i: getattr(obj, i) for i in self.STANCE_ATTRIBS}
+			return json.JSONEncoder.default(self, obj)
+
+	return StanceEncoder().encode(stance_list)
 
 
 class Stance(object):

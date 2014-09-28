@@ -15,9 +15,7 @@ from panda3d.core import *
 
 from combat.terrain import Terrain as CombatTerrain, MAP_SIZE
 from combat.player import Player as CombatPlayer
-from stance_generator import StanceGenerator, Stance
-
-import json
+from stance_generator import StanceGenerator, stances_to_json
 
 
 class GameState(object, DirectObject.DirectObject):
@@ -362,22 +360,6 @@ class LobbyState(GameState):
 				self.base.ui.execute_js("setActiveTab(%d)" % self.ui_selection)
 			self.ui_last = self.ui_selection
 
-
-#TODO: Move this
-def stances_to_json(stance_list):
-	class StanceEncoder(json.JSONEncoder):
-		STANCE_ATTRIBS = [
-			"name",
-			"benefit_vector",
-			"cost_vector",
-		]
-
-		def default(self, obj):
-			if isinstance(obj, Stance):
-				return {i: getattr(obj, i) for i in self.STANCE_ATTRIBS}
-			return json.JSONEncoder.default(self, obj)
-
-	return StanceEncoder().encode(stance_list)
 
 class EndCombatState(GameState):
 	def __init__(self, _base):
