@@ -442,6 +442,45 @@ class EndCombatState(GameState):
 			self.ui_last = self.ui_selection
 
 
+class TitleState(GameState):
+	def __init__(self, _base):
+		super(TitleState, self).__init__(_base, 'title_ui')
+
+		self.ui_options = [
+			"NEW",
+			"LOAD",
+			"OPTIONS",
+			"QUIT",
+		]
+		self.mode = None
+		self.base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection, True)
+
+	def accept_selection(self):
+		super(TitleState, self).accept_selection()
+		if self.mode is None:
+			self.mode = self.ui_options[self.ui_selection]
+
+			if self.mode == "NEW":
+				self.base.change_state(LobbyState)
+			elif self.mode == "LOAD":
+				self.base.change_state(LobbyState)
+			elif self.mode == "OPTIONS":
+				self.mode = None
+			elif self.mode == "QUIT":
+				sys.exit()
+
+	def main_loop(self):
+		ui_max = len(self.ui_options) - 1
+		if self.ui_selection > ui_max:
+			self.ui_selection = 0
+		elif self.ui_selection < 0:
+			self.ui_selection = ui_max
+
+		if self.ui_last != self.ui_selection:
+			self.base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
+			self.ui_last = self.ui_selection
+
+
 class Game(ShowBase):
 	def __init__(self):
 		ShowBase.__init__(self)
@@ -451,7 +490,7 @@ class Game(ShowBase):
 
 		self.ui = CEFPanda()
 
-		self.state = LobbyState(self)
+		self.state = TitleState(self)
 
 		self.taskMgr.add(self.main_loop, "MainLoop")
 
