@@ -36,30 +36,41 @@ class GameState(object, DirectObject.DirectObject):
 		self.accept("enter", self.accept_selection)
 		self.accept("escape", self.escape)
 
+		# Load UI
 		if ui is not None:
 			self.base.ui.load('ui/' + ui + '.html')
 
 		self.ui_last = self.ui_selection = 0
 
+		# Load UI sounds
+		self.base.sfxManagerList[0].setVolume(0.5)  # TODO: Make this user settable
+		self.uifx_selection = self.base.loader.loadSfx("audio/MENU_Pick.wav")
+		self.uifx_accept = self.base.loader.loadSfx("audio/MENU B_Select.wav")
+		self.uifx_back = self.base.loader.loadSfx("audio/MENU B_Back.wav")
+
 	def destroy(self):
 		self.ignoreAll()
 
 	def accept_selection(self):
-		pass
+		self.uifx_accept.play()
 
 	def escape(self):
-		pass
+		self.uifx_back.play()
 
 	def sel_up(self):
+		self.uifx_selection.play()
 		self.ui_selection -= 1
 
 	def sel_down(self):
+		self.uifx_selection.play()
 		self.ui_selection += 1
 
 	def sel_left(self):
+		self.uifx_selection.play()
 		self.sel_up()
 
 	def sel_right(self):
+		self.uifx_selection.play()
 		self.sel_down()
 
 	def main_loop(self):
@@ -116,12 +127,11 @@ class CombatState(GameState):
 			n.removeNode()
 
 	def escape(self):
-		if self.mode == "STANCE":
-			self.ui_selection = 0
-			self.base.ui.execute_js("switchToMenu('actions')")
+		super(CombatState, self).escape()
 		self.mode = "NONE"
 
 	def accept_selection(self):
+		super(CombatState, self).accept_selection()
 		p0 = self.player.grid_position
 		p1 = self.selected_pos
 		if self.mode == "MOVE":
@@ -149,7 +159,9 @@ class CombatState(GameState):
 			self.player.active_stance = self.player.stances[self.ui_selection]
 			self.player.action_set.remove("STANCE")
 			self.base.ui.execute_js("disableItem('STANCE')")
-			self.escape()
+			self.ui_selection = 0
+			self.base.ui.execute_js("switchToMenu('actions')")
+			self.mode = "NONE"
 		else:
 			if self.ui_selection == 0:
 				self.enter_stance_mode()
@@ -179,22 +191,26 @@ class CombatState(GameState):
 		self.mode = "NONE"
 
 	def sel_up(self):
+		self.uifx_selection.play()
 		if self.mode in {"ATTACK", "MOVE"}:
 			self.selected_pos[1] += 1
 		else:
 			self.ui_selection -= 1
 
 	def sel_left(self):
+		self.uifx_selection.play()
 		if self.mode in {"ATTACK", "MOVE"}:
 			self.selected_pos[0] -= 1
 
 	def sel_down(self):
+		self.uifx_selection.play()
 		if self.mode in {"ATTACK", "MOVE"}:
 			self.selected_pos[1] -= 1
 		else:
 			self.ui_selection += 1
 
 	def sel_right(self):
+		self.uifx_selection.play()
 		if self.mode in {"ATTACK", "MOVE"}:
 			self.selected_pos[0] += 1
 
@@ -310,6 +326,7 @@ class LobbyState(GameState):
 
 	def accept_selection(self):
 		if self.mode is None:
+			super(LobbyState, self).accept_selection()
 			self.mode = self.ui_options[self.ui_selection]
 			self.ui_selection = 0
 	
@@ -324,6 +341,7 @@ class LobbyState(GameState):
 
 	def escape(self):
 		if self.mode is not None:
+			super(LobbyState, self).escape()
 			self.ui_selection = self.ui_options.index(self.mode)
 			self.mode = None
 
@@ -383,6 +401,7 @@ class EndCombatState(GameState):
 		self.base.ui.execute_js("setupSpells('gen_spells', %s)" % stance_str, onload=True)
 
 	def accept_selection(self):
+		super(EndCombatState, self).accept_selection()
 		if self.spell_list == 'curr_spells':
 			self.spell_list = 'gen_spells'
 		else:
@@ -397,6 +416,7 @@ class EndCombatState(GameState):
 		self.last_selection, self.ui_selection = self.ui_selection, self.last_selection
 
 	def escape(self):
+		super(EndCombatState, self).escape()
 		if self.spell_list == 'gen_spells':
 			self.spell_list = 'curr_spells'
 			self.last_selection, self.ui_selection = self.ui_selection, self.last_selection
