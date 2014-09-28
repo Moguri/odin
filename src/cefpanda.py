@@ -82,6 +82,8 @@ class CEFPanda(object):
 		self._set_browser_size()
 		base.accept('window-event', self._set_browser_size)
 
+		base.win.addPythonEventHandler(self._handle_key, "_handle_keys")
+
 		base.taskMgr.add(self._cef_message_loop, "CefMessageLoop")
 
 		def shutdown_cef():
@@ -126,8 +128,23 @@ class CEFPanda(object):
 			# self._cef_texture.set_ram_image(img)
 			self.browser.WasResized()
 
+	def _handle_key(self, key):
+		msgtypes = {
+			0x100: cefpython.KEYEVENT_KEYDOWN,
+			0x101: cefpython.KEYEVENT_KEYUP,
+			0x102: cefpython.KEYEVENT_CHAR,
+		}
+		if key.getMsg() in msgtypes.keys():
+			keyevent = {
+				"type": msgtypes[key.getMsg()],
+				"windows_key_code": key.getWparam(),
+			}
+
+			self.browser.SendKeyEvent(keyevent)
+
 	def _cef_message_loop(self, task):
 		cefpython.MessageLoopWork()
+		self.browser.SendFocusEvent(True)
 
 		# if base.mouseWatcherNode.has_mouse():
 		# 	mouse = base.mouseWatcherNode.getMouse()
