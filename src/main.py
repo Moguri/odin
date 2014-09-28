@@ -128,6 +128,9 @@ class CombatState(GameState):
 
 	def escape(self):
 		super(CombatState, self).escape()
+		if self.mode == "STANCE":
+			self.ui_selection = 0
+			self.base.ui.execute_js("switchToMenu('actions')")
 		self.mode = "NONE"
 
 	def accept_selection(self):
@@ -175,6 +178,7 @@ class CombatState(GameState):
 	def enter_stance_mode(self):
 		if "STANCE" in self.player.action_set:
 			self.mode = "STANCE"
+			self.base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection)
 			self.base.ui.execute_js("switchToMenu('stances')")
 
 	def enter_move_mode(self):
