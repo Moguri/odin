@@ -23,6 +23,11 @@ class GameState(object, DirectObject.DirectObject):
 		DirectObject.DirectObject.__init__(self)
 		self.base = _base
 
+		if self.base.player is None:
+			print("Creating default player")
+			self.base.player = CombatPlayer("Player", level=3)
+		self.player = self.base.player
+
 		self.accept("arrow_up", self.sel_up)
 		self.accept("arrow_left", self.sel_left)
 		self.accept("arrow_down", self.sel_down)
@@ -101,9 +106,6 @@ class CombatState(GameState):
 		self.mode = "NONE"
 
 		# Setup the combatants
-		self.player = CombatPlayer("Player", level=3)
-		for stance in self.player.stances:
-			print(stance)
 		stance_str = "[" + ",".join(["'%s'" % i.name for i in self.player.stances]) + "]"
 		self.base.ui.execute_js("setStances(%s)" % stance_str, onload=True)
 		self.player.roll_initiative()
@@ -365,10 +367,6 @@ class EndCombatState(GameState):
 	def __init__(self, _base):
 		super(EndCombatState, self).__init__(_base, 'end_combat_ui')
 
-		# Send the player's current spells to the UI
-		#TODO: Replace this with the actual player
-		self.player = CombatPlayer()
-
 		# Generate some new spells
 		self.new_stances = StanceGenerator.n_random(4)
 
@@ -471,6 +469,8 @@ class Game(ShowBase):
 		self.win.setCloseRequestEvent("f1")
 
 		self.ui = CEFPanda()
+
+		self.player = None
 
 		self.state = TitleState(self)
 
