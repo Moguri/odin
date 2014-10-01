@@ -28,7 +28,11 @@ win-size 1280 720
 # Uncomment this line if you want to run Panda fullscreen instead of
 # in a window.
 
-#fullscreen #f
+#fullscreen #t
+
+# Uncomment this line to do remove window decorations (e.g., to do
+borderless fullscreen)
+#undecorated #t
 
 # The framebuffer-hardware flag forces it to use an accelerated driver.
 # The framebuffer-software flag forces it to use a software renderer.
