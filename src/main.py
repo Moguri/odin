@@ -88,7 +88,6 @@ class CombatState(GameState):
 		self.accept("3", self.end_turn)
 
 		self.terrain = CombatTerrain()
-		self.player = CombatPlayer("Player")
 		self.player.roll_initiative()
 
 		self.enemies = []
