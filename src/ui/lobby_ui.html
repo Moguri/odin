@@ -24,7 +24,29 @@
         <div class="well">
             <div class="tab-content">
                 <div id="student_info" class="tab-pane fade in active">
-                    <h1>Student Information</h1>
+                    <h1>Student Information for <em id="name"></em></h1>
+
+                    <h2>Stats</h2>
+                    <dl id="stats" class="dl-horizontal">
+                        <dt>Health:</dt>
+                        <dd id="health"></dd>
+                        <dt>Movement:</dt>
+                        <dd id="movement"></dd>
+                        <dt>Range:</dt>
+                        <dd id="range"></dd>
+                        <dt>Damage:</dt>
+                        <dd id="damage"></dd>
+                        <dt>Defense:</dt>
+                        <dd id="defense"></dd>
+                        <dt>Regen:</dt>
+                        <dd id="regen"></dd>
+                        <dt>Speed:</dt>
+                        <dd id="speed"></dd>
+                    </dl>
+
+                    <h2>Stances</h2>
+                    <ul id="spells" class="nav nav-pills nav-justified">
+                    </ul>
                 </div>
 
                 <div id="coursework" class="tab-pane fade">
@@ -47,9 +69,18 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="Chart.min.js"></script>
+<script src="common.js"></script>
 <script>
     function setActiveTab(idx) {
         $('#menu li:eq(' + idx + ') a').tab('show');
+    }
+
+    function setupStudentInfo(student) {
+        $("#name").html(student['name']);
+        $("#stats dd").each(function(idx, dd) {
+            dd.innerHTML = student[dd.id];
+        });
     }
 </script>
 </body>

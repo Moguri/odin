@@ -40,6 +40,27 @@ def load_stance(name, stance_dict):
 	return stance
 
 
+class _PlayerEncoder(json.JSONEncoder):
+	ATTRIBS = [
+		"level",
+		"remaining_movement",
+		"health",
+		"name",
+		"atb",
+		"movement",
+		"range",
+		"damage",
+		"defense",
+		"regen",
+		"speed",
+	]
+
+	def default(self, obj):
+		if isinstance(obj, Player):
+			return {i: getattr(obj, i) for i in self.ATTRIBS}
+		return json.JSONEncoder.default(self, obj)
+
+
 class Player(object):
 	@classmethod
 	def from_player_chassis(cls, name, level=1):
@@ -80,6 +101,9 @@ class Player(object):
 
 	def __del__(self):
 		self.model.removeNode()
+
+	def to_json(self):
+		return _PlayerEncoder().encode(self)
 
 	def roll_initiative(self):
 		self.atb = random.random() * self.speed

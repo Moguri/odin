@@ -327,6 +327,8 @@ class LobbyState(GameState):
 		]
 		self.mode = None
 		self.base.ui.execute_js("setActiveTab(%d)" % self.ui_selection, True)
+		self.base.ui.execute_js("setupStudentInfo(%s)" % self.player.to_json(), True)
+		self.base.ui.execute_js("setupSpells('spells', %s)" % stances_to_json(self.player.stances), onload=True)
 
 	def accept_selection(self):
 		if self.mode is None:
