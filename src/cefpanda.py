@@ -79,6 +79,11 @@ class CEFPanda(object):
 		self._js_onload_queue = []
 		self.browser.SetClientCallback("OnLoadEnd", self._load_end)
 
+
+		self.jsbindings = cefpython.JavascriptBindings()
+		self.browser.SetJavascriptBindings(self.jsbindings)
+		self._js_func_queue = []
+
 		self._set_browser_size()
 		base.accept('window-event', self._set_browser_size)
 
@@ -92,12 +97,23 @@ class CEFPanda(object):
 		atexit.register(shutdown_cef)
 
 	def _load_end(self, *args, **kwargs):
+		self._is_loaded = True
+
+		# Register any functions
+		for i in self._js_func_queue:
+			self.set_js_function(*i)
+
+		self._js_func_queue = []
+
 		# Execute any queued javascript
 		for i in self._js_onload_queue:
 			self.execute_js(i)
 
 		self._js_onload_queue = []
-		self._is_loaded = True
+
+	def Visit(self, string):
+		print(string)
+		return True
 
 	def load(self, url):
 		url = os.path.abspath(url if sys.platform == "win32" else "file://" + url)
@@ -109,6 +125,13 @@ class CEFPanda(object):
 			self._js_onload_queue.append(js)
 		else:
 			self.browser.GetMainFrame().ExecuteJavascript(js)
+
+	def set_js_function(self, name, func):
+		if not self._is_loaded:
+			self._js_func_queue.append((name, func))
+		else:
+			self.jsbindings.SetFunction(name, func)
+			self.jsbindings.Rebind()
 
 	def _set_browser_size(self, window=None):
 		width = int(round(base.win.getXSize() * self._UI_SCALE))
