@@ -436,13 +436,24 @@ class TitleState(GameState):
 		self.mode = None
 		self.base.ui.execute_js("setActiveSelection(%d)" % self.ui_selection, True)
 
+		self.base.ui.set_js_function("change_name", self.change_name)
+
+	def change_name(self, name):
+			self.player.name = name
+			self.base.change_state(LobbyState)
+
+	def escape(self):
+		super(TitleState, self).escape()
+
+		self.base.ui.execute_js("setActiveTab('main')")
+
 	def accept_selection(self):
 		super(TitleState, self).accept_selection()
 		if self.mode is None:
 			self.mode = self.ui_options[self.ui_selection]
 
 			if self.mode == "NEW":
-				self.base.change_state(LobbyState)
+				self.base.ui.execute_js("setActiveTab('new_char')")
 			elif self.mode == "LOAD":
 				self.base.change_state(LobbyState)
 			elif self.mode == "OPTIONS":

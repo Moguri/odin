@@ -30,12 +30,21 @@
     </div>
 
     <div id="content">
-        <ul id="menu" class="nav nav-pills nav-stacked">
-            <li><a href="#">New Character</a></li>
-            <li><a href="#">Load Character</a></li>
-            <li><a href="#">Options</a></li>
-            <li><a href="#">Quit</a></li>
-        </ul>
+        <div class="tab-content">
+            <div id="main" class="tab-pane fade in active">
+                <ul id="menu" class="nav nav-pills nav-stacked">
+                    <li><a href="#">New Character</a></li>
+                    <li><a href="#">Load Character</a></li>
+                    <li><a href="#">Options</a></li>
+                    <li><a href="#">Quit</a></li>
+                </ul>
+            </div>
+
+            <div id="new_char" class="tab-pane fade in">
+                <h2>Enter a name</h2>
+                <input type="text">
+            </div>
+        </div>
     </div>
 </div>
 
@@ -46,6 +55,19 @@
         $("#menu li").removeClass("active");
         $("#menu li").eq(idx).addClass("active");
     }
+
+    function setActiveTab(tab) {
+        $(".tab-content .tab-pane").hide();
+        $(".tab-content #" + tab).show();
+
+        if (tab == "new_char") {
+            $("#new_char input").focus();
+        }
+    }
+
+    $("#new_char input[type=text]").change(function() {
+       change_name($(this).val());
+    });
 </script>
 </body>
 </html>
